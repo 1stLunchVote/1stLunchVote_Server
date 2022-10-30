@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { LoginRequestDto } from '../interfaces/auth/request/LoginRequestDto';
 import { LoginResponseDto } from '../interfaces/auth/response/LoginResponseDto';
-import { PostBaseResponseDto } from '../interfaces/common/PostBaseResponseDto';
 import User from '../models/User';
 import getToken from '../modules/jwtHandler';
 import responseMessage from '../modules/responseMessage';
