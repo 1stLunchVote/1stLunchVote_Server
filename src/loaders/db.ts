@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Collection } from 'mongoose';
 import config from '../config';
 import Group from '../models/Group';
 import LunchTemplate from '../models/LunchTemplate';
@@ -14,21 +14,20 @@ const connectDB = async () => {
     console.log('Mongoose Connected ...');
 
     User.createCollection().then(function (collection) {
-        console.log('User Collection is created!');
+      console.log(`${collection.collectionName} is created!`);
     });
 
     Menu.createCollection().then(function (collection) {
-      console.log('Menu Collection is created!');
+      console.log(`${collection.collectionName} is created!`);
     });
 
     LunchTemplate.createCollection().then(function (collection) {
-      console.log('LunchTemplate Collection is created!');
+      console.log(`${collection.collectionName} is created!`);
     });
 
     Group.createCollection().then(function (collection) {
-      console.log('Group Collection is created!');
+      console.log(`${collection.collectionName} is created!`);
     });
-
   } catch (err: any) {
     console.error(err.message);
     process.exit(1);
