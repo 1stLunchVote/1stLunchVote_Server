@@ -1,4 +1,4 @@
-import mongoose, { Collection } from 'mongoose';
+import mongoose from 'mongoose';
 import config from '../config';
 import Group from '../models/Group';
 import LunchTemplate from '../models/LunchTemplate';
