@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import config from '../config';
+import LunchTemplate from '../models/LunchTemplate';
 import Menu from '../models/Menu';
 import User from '../models/User';
 
@@ -17,6 +18,10 @@ const connectDB = async () => {
 
     Menu.createCollection().then(function (collection) {
       console.log('Menu Collection is created!');
+    });
+
+    LunchTemplate.createCollection().then(function (collection) {
+      console.log('LunchTemplate Collection is created!');
     });
 
   } catch (err: any) {
