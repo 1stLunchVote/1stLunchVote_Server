@@ -33,9 +33,9 @@ app.use(function (err: ErrorType, req: Request, res: Response, next: NextFunctio
 app
   .listen(config.port, () => {
     console.log(`
-    ##################################################
+    ####################################################
         🐒  1stLunchVote Server listening on port 🐒
-    ##################################################
+    ####################################################
   `);
   })
   .on('error', (err) => {

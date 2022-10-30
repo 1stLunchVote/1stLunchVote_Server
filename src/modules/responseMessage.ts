@@ -8,6 +8,8 @@ const message = {
   NULL_VALUE_TOKEN: '토큰이 없습니다.',
   INVALID_PASSWORD: '비밀번호 오류입니다.',
   BAD_QUERY: '올바르지 않은 쿼리 형식입니다.',
+  EXPIRED_TOKEN: '만료된 토큰입니다.',
+  INVALID_TOKEN: '유효하지 않은 토큰입니다.'
 };
 
 export default message;
