@@ -5,12 +5,14 @@ import responseMessage from '../modules/responseMessage';
 
 const updateUserNickname = async (userId: string, nicknameUpdateRequestDto: NicknameUpdateRequestDto): Promise<NicknameUpdateResponseDto | string> => {
   try {
-    const user = await User.findByIdAndUpdate(userId, nicknameUpdateRequestDto);
+    const user = await User.findById(userId);
     if (!user) {
       return responseMessage.NO_USER;
     }
+    await User.findByIdAndUpdate(userId, nicknameUpdateRequestDto);
+
     const data: NicknameUpdateResponseDto = {
-      nickname: user.nickname,
+      nickname: nicknameUpdateRequestDto.nickname,
     };
     return data;
   } catch (error) {

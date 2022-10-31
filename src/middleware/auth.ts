@@ -19,7 +19,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
     // jwt token 해독
     const decoded = jwt.verify(token, config.jwtSecret);
     // payload 꺼내오기
-    req.body.user = (decoded as JwtPayload);
+    req.body.userId = (decoded as JwtPayload).user.id;
     // 다음으로 넘기기
     next();
   } catch (error: any) {

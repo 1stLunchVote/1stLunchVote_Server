@@ -16,6 +16,9 @@ const message = {
   UNDEFINED_SOCIAL_TYPE: '잘못된 소셜 타입입니다.',
   KAKAO_TOKEN_ERROR: '카카오 토큰 에러입니다.',
   USER_LOGIN_SUCCESS: '로그인 성공',
+
+  // user
+  NICKNAME_UPDATE_SUCCESS: '닉네임 변경 성공',
 };
 
 export default message;
