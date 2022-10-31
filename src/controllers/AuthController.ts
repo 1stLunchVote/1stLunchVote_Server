@@ -11,13 +11,13 @@ import { LoginRequestDto } from '../interfaces/auth/request/LoginRequestDto';
  *  @access Public
  */
 const socialLogin = async (req: Request, res: Response, next: NextFunction) => {
-  const { social } = req.params;
-  const loginRequestDto: LoginRequestDto = req.body;
-
   try {
+    const { social } = req.params;
     if (social != 'KAKAO') {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.UNDEFINED_SOCIAL_TYPE));
     }
+
+    const loginRequestDto: LoginRequestDto = req.body;
 
     const data = await AuthService.kakaoLogin(loginRequestDto);
 
@@ -32,7 +32,7 @@ const socialLogin = async (req: Request, res: Response, next: NextFunction) => {
     res.status(statusCode.OK).send(util.success(statusCode.OK, message.USER_LOGIN_SUCCESS, data));
   } catch (error) {
     console.log(error);
-    res.status(statusCode.INTERNAL_SERVER_ERROR).send;
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
   }
 };
 

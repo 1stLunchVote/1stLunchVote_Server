@@ -3,11 +3,8 @@ import { NicknameUpdateResponseDto } from '../interfaces/user/response/NicknameU
 import User from '../models/User';
 import responseMessage from '../modules/responseMessage';
 
-const updateUserNickname = async (userId: string, nickname: string): Promise<NicknameUpdateResponseDto | string> => {
+const updateUserNickname = async (userId: string, nicknameUpdateRequestDto: NicknameUpdateRequestDto): Promise<NicknameUpdateResponseDto | string> => {
   try {
-    const nicknameUpdateRequestDto: NicknameUpdateRequestDto = {
-      nickname: nickname,
-    };
     const user = await User.findByIdAndUpdate(userId, nicknameUpdateRequestDto);
     if (!user) {
       return responseMessage.NO_USER;
