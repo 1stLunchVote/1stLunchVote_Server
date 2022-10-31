@@ -6,6 +6,7 @@ const message = {
   BAD_REQUEST: '잘못된 문법으로 인하여 서버가 요청을 이해할 수 없습니다.',
   INTERNAL_SERVER_ERROR: '서버 내부 오류입니다.',
   BAD_QUERY: '올바르지 않은 쿼리 형식입니다.',
+  NO_USER: '존재하지 않는 유저입니다.',
 
   // auth
   EXPIRED_TOKEN: '만료된 토큰입니다.',
@@ -15,6 +16,10 @@ const message = {
   UNDEFINED_SOCIAL_TYPE: '잘못된 소셜 타입입니다.',
   KAKAO_TOKEN_ERROR: '카카오 토큰 에러입니다.',
   USER_LOGIN_SUCCESS: '로그인 성공',
+
+  // user
+  NICKNAME_UPDATE_SUCCESS: '닉네임 변경 성공',
+  INVALID_NICKNAME_LENGTH: '닉네임 길이를 2~8 으로 해주세요.',
 };
 
 export default message;
