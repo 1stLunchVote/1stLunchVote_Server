@@ -26,14 +26,15 @@ const kakaoLogin = async (loginRequestDto: LoginRequestDto): Promise<LoginRespon
     }
 
     let existUser = await User.findOne({
-      email: kakaoUserData.email,
+      email: kakaoUserData.kakao_account.email,
     });
 
     // 유저가 db에 없는 경우 유저 회원 가입
     if (!existUser) {
       const user = new User({
         socialType: 'KAKAO',
-        email: kakaoUserData.email,
+        email: kakaoUserData.kakao_account.email,
+        nickname: kakaoUserData.kakao_account.profile.nickname,
       });
 
       await user.save();
@@ -42,7 +43,13 @@ const kakaoLogin = async (loginRequestDto: LoginRequestDto): Promise<LoginRespon
 
     await User.findByIdAndUpdate(existUser._id, existUser);
 
-    return getToken(existUser._id);
+    const loginResponseDto: LoginResponseDto = {
+      email: existUser.email,
+      nickname: existUser.nickname,
+      accessToken: getToken(existUser._id)
+    }
+
+    return loginResponseDto;
   } catch (error) {
     console.log('kakao token error');
     return null;

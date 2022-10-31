@@ -28,10 +28,8 @@ const socialLogin = async (req: Request, res: Response, next: NextFunction) => {
     } else if (!data) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.KAKAO_TOKEN_ERROR));
     }
-    const responseData = {
-      accessToken: data,
-    };
-    res.status(statusCode.OK).send(util.success(statusCode.OK, message.USER_LOGIN_SUCCESS, responseData));
+
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.USER_LOGIN_SUCCESS, data));
   } catch (error) {
     console.log(error);
     res.status(statusCode.INTERNAL_SERVER_ERROR).send;
