@@ -19,6 +19,7 @@ const message = {
 
   // user
   NICKNAME_UPDATE_SUCCESS: '닉네임 변경 성공',
+  INVALID_NICKNAME_LENGTH: '닉네임 길이를 2~8 으로 해주세요.',
 };
 
 export default message;

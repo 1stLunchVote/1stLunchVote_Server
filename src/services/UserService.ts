@@ -9,6 +9,10 @@ const updateUserNickname = async (userId: string, nicknameUpdateRequestDto: Nick
     if (!user) {
       return responseMessage.NO_USER;
     }
+    const nickname = nicknameUpdateRequestDto.nickname;
+    if (nickname.length < 2 || nickname.length > 8) {
+        return responseMessage.INVALID_NICKNAME_LENGTH;
+    }
     await User.findByIdAndUpdate(userId, nicknameUpdateRequestDto);
 
     const data: NicknameUpdateResponseDto = {

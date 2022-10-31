@@ -21,6 +21,8 @@ const updateUserNickname = async (req: Request, res: Response, next: NextFunctio
     const data = await UserService.updateUserNickname(userId, nicknameUpdateRequestDto);
     if (data === message.NO_USER) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
+    } else if (data === message.INVALID_NICKNAME_LENGTH) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_NICKNAME_LENGTH));
     }
 
     res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.NICKNAME_UPDATE_SUCCESS, data));
