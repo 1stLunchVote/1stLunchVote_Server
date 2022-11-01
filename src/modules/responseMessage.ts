@@ -30,6 +30,7 @@ const message = {
   POST_LUNCH_TEMPLATE_SUCCESS: '템플릿 생성 성공',
   NO_LUNCH_TEMPLATE_CONTENT: '제작한 템플릿이 없습니다.',
   GET_ALL_LUNCH_TEMPLATE_SUCCESS: '전체 템플릿 조회 성공',
+  INVALID_LUNCH_TEMPLATE: '잘못된 템플릿입니다.',
 };
 
 export default message;
