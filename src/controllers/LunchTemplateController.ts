@@ -11,6 +11,7 @@ import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request
  *  @access Public
  */
 const postLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.body.userId;
   try {
     const postLunchTemplateRequestDto: PostLunchTemplateRequestDto = {
       templateName: req.body.templateName,
@@ -22,7 +23,7 @@ const postLunchTemplate = async (req: Request, res: Response, next: NextFunction
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NULL_VALUE));
     }
 
-    const data = await LunchTemplateService.postLunchTemplate(postLunchTemplateRequestDto);
+    const data = await LunchTemplateService.postLunchTemplate(userId, postLunchTemplateRequestDto);
     if (data === message.INVALID_TEMPLATE_NAME_LENGTH) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_TEMPLATE_NAME_LENGTH));
     }

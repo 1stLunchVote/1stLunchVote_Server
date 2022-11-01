@@ -1,8 +1,9 @@
-import { PostLunchTemplateResponseDto } from "../interfaces/lunchTemplate/response/PostLunchTemplateResponseDto";
-import { PostLunchTemplateRequestDto } from "../interfaces/lunchTemplate/request/postLunchTemplateRequestDto";
+import { PostLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/PostLunchTemplateResponseDto';
+import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/postLunchTemplateRequestDto';
 import responseMessage from '../modules/responseMessage';
+import LunchTemplate from '../models/LunchTemplate';
 
-const postLunchTemplate = async (postLunchTemplateRequestDto: PostLunchTemplateRequestDto): Promise<PostLunchTemplateResponseDto | string> => {
+const postLunchTemplate = async (userId: string, postLunchTemplateRequestDto: PostLunchTemplateRequestDto): Promise<PostLunchTemplateResponseDto | string> => {
   try {
     const templateName = postLunchTemplateRequestDto.templateName;
 
@@ -11,6 +12,13 @@ const postLunchTemplate = async (postLunchTemplateRequestDto: PostLunchTemplateR
     }
 
     const data: PostLunchTemplateResponseDto = postLunchTemplateRequestDto;
+    const lunchTemplate = new LunchTemplate({
+      userId: userId,
+      templateName: data.templateName,
+      likesMenu: data.likesMenu,
+      dislikesMenu: data.dislikesMenu,
+    });
+    await lunchTemplate.save();
 
     return data;
   } catch (error) {
@@ -19,12 +27,12 @@ const postLunchTemplate = async (postLunchTemplateRequestDto: PostLunchTemplateR
   }
 };
 
-const isTemplateNameValid = async (templateName: string) => {
+const isTemplateNameValid = (templateName: string) => {
   if (templateName.length < 2 || templateName.length > 10) {
     return false;
   }
   return true;
-}
+};
 
 const LunchTemplateService = {
   postLunchTemplate,
