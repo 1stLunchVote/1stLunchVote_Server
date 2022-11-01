@@ -7,6 +7,7 @@ const message = {
   BAD_REQUEST: '잘못된 문법으로 인하여 서버가 요청을 이해할 수 없습니다.',
   INTERNAL_SERVER_ERROR: '서버 내부 오류입니다.',
   BAD_QUERY: '올바르지 않은 쿼리 형식입니다.',
+  INVALID_PARAMETER: '잘못된 파라미터입니다.',
   NO_USER: '존재하지 않는 유저입니다.',
 
   // auth
@@ -31,6 +32,7 @@ const message = {
   NO_LUNCH_TEMPLATE_CONTENT: '제작한 템플릿이 없습니다.',
   GET_ALL_LUNCH_TEMPLATE_SUCCESS: '전체 템플릿 조회 성공',
   INVALID_LUNCH_TEMPLATE: '잘못된 템플릿입니다.',
+  GET_LUNCH_TEMPLATE_SUCCESS: '템플릿 상세 조회 성공',
 };
 
 export default message;

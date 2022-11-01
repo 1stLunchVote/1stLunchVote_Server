@@ -112,6 +112,7 @@ const isTemplateNameValid = (templateName: string) => {
 const LunchTemplateService = {
   postLunchTemplate,
   getAllLunchTemplate,
+  getLunchTemplate
 };
 
 export default LunchTemplateService;
