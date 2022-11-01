@@ -35,8 +35,30 @@ const postLunchTemplate = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ *  @route Get /
+ *  @desc get all lunch template
+ *  @access Public
+ */
+const getAllLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.body.userId;
+  try {
+    const data = await LunchTemplateService.getAllLunchTemplate(userId);
+
+    if (data === message.NO_LUNCH_TEMPLATE_CONTENT) {
+      return res.status(statusCode.OK).send(util.success(statusCode.NO_CONTENT, message.NO_LUNCH_TEMPLATE_CONTENT));
+    }
+
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_ALL_LUNCH_TEMPLATE_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
 const LunchTemplateContoller = {
   postLunchTemplate,
+  getAllLunchTemplate,
 };
 
 export default LunchTemplateContoller;

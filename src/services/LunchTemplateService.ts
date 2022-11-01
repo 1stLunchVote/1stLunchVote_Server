@@ -2,6 +2,7 @@ import { PostLunchTemplateResponseDto } from '../interfaces/lunchTemplate/respon
 import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/postLunchTemplateRequestDto';
 import responseMessage from '../modules/responseMessage';
 import LunchTemplate from '../models/LunchTemplate';
+import { GetAllLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetAllLunchTemplateResponseDto';
 
 const postLunchTemplate = async (userId: string, postLunchTemplateRequestDto: PostLunchTemplateRequestDto): Promise<PostLunchTemplateResponseDto | string> => {
   try {
@@ -27,6 +28,38 @@ const postLunchTemplate = async (userId: string, postLunchTemplateRequestDto: Po
   }
 };
 
+const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateResponseDto | string> => {
+  try {
+    const lunchTemplateList = await LunchTemplate.find({
+      userId: userId
+    });
+
+    const results = await Promise.all(
+      lunchTemplateList.map(async (template) => {
+        const result = {
+          lunchTemplateId: template._id,
+          templateName: template.templateName,
+        };
+
+        return result;
+      }),
+    );
+
+    if (results.length == 0) {
+      return responseMessage.NO_LUNCH_TEMPLATE_CONTENT;
+    }
+
+    const data: GetAllLunchTemplateResponseDto = {
+      lunchTemplates: results,
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 const isTemplateNameValid = (templateName: string) => {
   if (templateName.length < 2 || templateName.length > 10) {
     return false;
@@ -36,6 +69,7 @@ const isTemplateNameValid = (templateName: string) => {
 
 const LunchTemplateService = {
   postLunchTemplate,
+  getAllLunchTemplate,
 };
 
 export default LunchTemplateService;
