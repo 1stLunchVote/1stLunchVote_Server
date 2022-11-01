@@ -1,6 +1,7 @@
 const message = {
   // 전체적으로 쓰이는 코드
   NULL_VALUE: '필요한 값이 없습니다.',
+  TO_MUCH_VALUE: '필요 없는 값이 있습니다.',
   FORBIDDEN: '접근 권한이 없습니다.',
   NOT_FOUND: '존재하지 않는 자원입니다.',
   BAD_REQUEST: '잘못된 문법으로 인하여 서버가 요청을 이해할 수 없습니다.',
@@ -20,6 +21,9 @@ const message = {
   // user
   NICKNAME_UPDATE_SUCCESS: '닉네임 변경 성공',
   INVALID_NICKNAME_LENGTH: '닉네임 길이를 2~8 으로 해주세요.',
+
+  // menu
+  GET_ALL_MENU_SUCCESS: '메뉴 전체 조회 성공',
 };
 
 export default message;
