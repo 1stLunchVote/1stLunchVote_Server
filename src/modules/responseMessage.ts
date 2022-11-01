@@ -27,6 +27,7 @@ const message = {
 
   // lunch template
   INVALID_TEMPLATE_NAME_LENGTH: '템플릿 제목의 길이를 2~10으로 해주세요.',
+  POST_LUNCH_TEMPLATE_SUCCESS: '템플릿 생성 성공',
 };
 
 export default message;
