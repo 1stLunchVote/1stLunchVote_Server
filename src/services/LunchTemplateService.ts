@@ -28,7 +28,7 @@ const postLunchTemplate = async (userId: string, postLunchTemplateRequestDto: Po
   }
 };
 
-const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateResponseDto> => {
+const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateResponseDto | string> => {
   try {
     const lunchTemplateList = await LunchTemplate.find({
       userId: userId
@@ -48,6 +48,7 @@ const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateR
     if (results.length === 0) {
       return responseMessage.NO_LUNCH_TEMPLATE_CONTENT;
     }
+    
     const data: GetAllLunchTemplateResponseDto = {
       lunchTemplates: results,
     }
