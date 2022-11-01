@@ -3,6 +3,8 @@ import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request
 import responseMessage from '../modules/responseMessage';
 import LunchTemplate from '../models/LunchTemplate';
 import { GetAllLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetAllLunchTemplateResponseDto';
+import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
+import Menu from '../models/Menu';
 
 const postLunchTemplate = async (userId: string, postLunchTemplateRequestDto: PostLunchTemplateRequestDto): Promise<PostLunchTemplateResponseDto | string> => {
   try {
@@ -60,6 +62,46 @@ const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateR
   }
 }
 
+const getLunchTemplate = async (lunchTemplateId: string): Promise<GetLunchTemplateResponseDto | string> => {
+  try {
+    const lunchTemplate = await LunchTemplate.findById(lunchTemplateId);
+    if (!lunchTemplate) {
+      return responseMessage.INVALID_LUNCH_TEMPLATE;
+    }
+    const menuList = await Menu.find();
+
+    const results = await Promise.all(
+      menuList.map(async (eachMenu) => {
+        let likesAndDislikes = 'NORMAL';
+        if (lunchTemplate.likesMenu.includes(eachMenu._id)) {
+          likesAndDislikes = 'LIKES';
+        } else if (lunchTemplate.dislikesMenu.includes(eachMenu._id)) {
+          likesAndDislikes = 'DISLiKES';
+        }
+
+        const menu = {
+          menuId: eachMenu._id,
+          menuName: eachMenu.menuName,
+          image: eachMenu.image,
+          likesAndDislikes: likesAndDislikes,
+        };
+
+        return menu;
+      }),
+    );
+
+    const data = {
+      templateName: lunchTemplate.templateName,
+      menu: results,
+    };
+    
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 const isTemplateNameValid = (templateName: string) => {
   if (templateName.length < 2 || templateName.length > 10) {
     return false;
@@ -70,6 +112,7 @@ const isTemplateNameValid = (templateName: string) => {
 const LunchTemplateService = {
   postLunchTemplate,
   getAllLunchTemplate,
+  getLunchTemplate
 };
 
 export default LunchTemplateService;

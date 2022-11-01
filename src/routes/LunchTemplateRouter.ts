@@ -6,5 +6,6 @@ const router: Router = Router();
 
 router.post('/', auth, LunchTemplateContoller.postLunchTemplate);
 router.get('/', auth, LunchTemplateContoller.getAllLunchTemplate);
+router.get('/:lunchTemplateId', auth, LunchTemplateContoller.getLunchTemplate);
 
 export default router;
