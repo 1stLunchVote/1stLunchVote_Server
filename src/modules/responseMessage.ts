@@ -24,6 +24,9 @@ const message = {
 
   // menu
   GET_ALL_MENU_SUCCESS: '메뉴 전체 조회 성공',
+
+  // lunch template
+  INVALID_TEMPLATE_NAME_LENGTH: '템플릿 제목의 길이를 2~10으로 해주세요.',
 };
 
 export default message;
