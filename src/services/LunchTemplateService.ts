@@ -6,11 +6,11 @@ const postLunchTemplate = async (postLunchTemplateRequestDto: PostLunchTemplateR
   try {
     const templateName = postLunchTemplateRequestDto.templateName;
 
-    if (templateName.length < 2 || templateName.length > 10) {
+    if (!isTemplateNameValid(templateName)) {
       return responseMessage.INVALID_TEMPLATE_NAME_LENGTH;
     }
 
-    
+    const data: PostLunchTemplateResponseDto = postLunchTemplateRequestDto;
 
     return data;
   } catch (error) {
@@ -18,6 +18,13 @@ const postLunchTemplate = async (postLunchTemplateRequestDto: PostLunchTemplateR
     throw error;
   }
 };
+
+const isTemplateNameValid = async (templateName: string) => {
+  if (templateName.length < 2 || templateName.length > 10) {
+    return false;
+  }
+  return true;
+}
 
 const LunchTemplateService = {
   postLunchTemplate,
