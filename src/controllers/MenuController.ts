@@ -11,11 +11,6 @@ import MenuService from '../services/MenuService';
  */
 const getAllMenu = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const menuRequestDto = req.body;
-    if (menuRequestDto) {
-      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.TO_MUCH_VALUE));
-    }
-
     const data = await MenuService.getAllMenu();
 
     res.status(statusCode.CREATED).send(util.success(statusCode.OK, message.GET_ALL_MENU_SUCCESS, data));
