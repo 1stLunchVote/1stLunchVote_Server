@@ -46,10 +46,10 @@ const getAllLunchTemplate = async (req: Request, res: Response, next: NextFuncti
     const data = await LunchTemplateService.getAllLunchTemplate(userId);
 
     if (data === message.NO_LUNCH_TEMPLATE_CONTENT) {
-      res.status(statusCode.NO_CONTENT).send(util.success(statusCode.NO_CONTENT, message.POST_LUNCH_TEMPLATE_SUCCESS));
+      return res.status(statusCode.OK).send(util.success(statusCode.NO_CONTENT, message.NO_LUNCH_TEMPLATE_CONTENT));
     }
 
-    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_ALL_MENU_SUCCESS, data));
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_ALL_LUNCH_TEMPLATE_SUCCESS, data));
   } catch (error) {
     console.log(error);
     res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));

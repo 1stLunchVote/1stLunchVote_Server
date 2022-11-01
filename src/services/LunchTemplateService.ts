@@ -45,10 +45,10 @@ const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateR
       }),
     );
 
-    if (results.length === 0) {
+    if (results.length == 0) {
       return responseMessage.NO_LUNCH_TEMPLATE_CONTENT;
     }
-    
+
     const data: GetAllLunchTemplateResponseDto = {
       lunchTemplates: results,
     }
