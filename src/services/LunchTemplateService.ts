@@ -44,6 +44,10 @@ const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateR
         return result;
       }),
     );
+
+    if (results.length === 0) {
+      return responseMessage.NO_LUNCH_TEMPLATE_CONTENT;
+    }
     const data: GetAllLunchTemplateResponseDto = {
       lunchTemplates: results,
     }
@@ -64,6 +68,7 @@ const isTemplateNameValid = (templateName: string) => {
 
 const LunchTemplateService = {
   postLunchTemplate,
+  getAllLunchTemplate,
 };
 
 export default LunchTemplateService;
