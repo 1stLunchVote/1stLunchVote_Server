@@ -5,7 +5,6 @@ import { GetAllLunchTemplateResponseDto } from '../interfaces/lunchTemplate/resp
 import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
 import Menu from '../models/Menu';
 import { UpdateLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/UpdateLunchTemplateRequestDto';
-import mongoose from 'mongoose';
 
 const postLunchTemplate = async (userId: string, lunchTemplateDto: LunchTemplateDto): Promise<LunchTemplateDto | string> => {
   try {
@@ -147,12 +146,10 @@ const updateLunchTemplate = async (userId: string, updatelunchTemplateRequestDto
 
 const deleteLunchTemplate = async (lunchTemplateId: string): Promise<string | undefined> => {
   try {
-    const lunchTemplate = await LunchTemplate.findById(lunchTemplateId);
+    const lunchTemplate = await LunchTemplate.findByIdAndDelete(lunchTemplateId);
     if (!lunchTemplate) {
       return responseMessage.INVALID_PARAMETER;
     }
-
-    await lunchTemplate.deleteOne();
   } catch (error) {
     console.log(error);
     throw error;
