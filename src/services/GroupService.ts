@@ -74,7 +74,7 @@ const getAllGroup = async (userId: string): Promise<GetAllGroupResponseDto | str
         const result = {
           groupId: group._id,
           groupName: group.groupName,
-          memberCount: group.members.length,
+          memberCount: group.members.length + 1,
         };
 
         return result;
