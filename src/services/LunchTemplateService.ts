@@ -5,6 +5,7 @@ import { GetAllLunchTemplateResponseDto } from '../interfaces/lunchTemplate/resp
 import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
 import Menu from '../models/Menu';
 import { UpdateLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/UpdateLunchTemplateRequestDto';
+import mongoose from 'mongoose';
 
 const postLunchTemplate = async (userId: string, lunchTemplateDto: LunchTemplateDto): Promise<LunchTemplateDto | string> => {
   try {
@@ -108,22 +109,33 @@ const updateLunchTemplate = async (userId: string, updatelunchTemplateRequestDto
     if (!isTemplateNameValid(templateName)) {
       return responseMessage.INVALID_TEMPLATE_NAME_LENGTH;
     }
-    if (!await LunchTemplate.findById(updatelunchTemplateRequestDto.lunchTemplateId)) {
+
+    const lunchTemplate = await LunchTemplate.findById(updatelunchTemplateRequestDto.lunchTemplateId);
+    if (!lunchTemplate) {
       return responseMessage.INVALID_PARAMETER;
     }
+    
+    let likesMenu = updatelunchTemplateRequestDto.likesMenu;
+    let dislikesMenu = updatelunchTemplateRequestDto.dislikesMenu;
+    if (!likesMenu) {
+      likesMenu = [];
+    }
+    if (!dislikesMenu) {
+      dislikesMenu = [];
+    }
 
-    const updateLunchTemplateDao = new LunchTemplate({
+    const updateLunchTemplateDao = {
       userId: userId,
-      templateName: updatelunchTemplateRequestDto.templateName,
-      likesMenu: updatelunchTemplateRequestDto.likesMenu,
-      dislikesMenu: updatelunchTemplateRequestDto.dislikesMenu,
-    });
-    await LunchTemplate.findByIdAndUpdate(updatelunchTemplateRequestDto.lunchTemplateId, updateLunchTemplateDao);
+      templateName: templateName,
+      likesMenu: likesMenu,
+      dislikesMenu: dislikesMenu,
+    };
+    await lunchTemplate.updateOne(updateLunchTemplateDao);
 
     const data = {
       templateName: updatelunchTemplateRequestDto.templateName,
-      likesMenu: updatelunchTemplateRequestDto.likesMenu,
-      dislikesMenu: updatelunchTemplateRequestDto.dislikesMenu,
+      likesMenu: likesMenu,
+      dislikesMenu: dislikesMenu,
     };
 
     return data;

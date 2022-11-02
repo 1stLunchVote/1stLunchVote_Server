@@ -82,7 +82,7 @@ const getLunchTemplate = async (req: Request, res: Response, next: NextFunction)
 };
 
 /**
- *  @route Put /
+ *  @route Patch /:lunchTemplateId
  *  @desc update lunch template
  *  @access Public
  */
@@ -95,7 +95,7 @@ const updateLunchTemplate = async (req: Request, res: Response, next: NextFuncti
     }
 
     const updateLunchTemplateRequestDto: UpdateLunchTemplateRequestDto = {
-      lunchTemplateId:lunchTemplateId,
+      lunchTemplateId: lunchTemplateId,
       templateName: req.body.templateName,
       likesMenu: req.body.likesMenu,
       dislikesMenu: req.body.dislikesMenu,
@@ -112,7 +112,7 @@ const updateLunchTemplate = async (req: Request, res: Response, next: NextFuncti
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_PARAMETER));
     }
 
-    res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.POST_LUNCH_TEMPLATE_SUCCESS, data));
+    res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.UPDATE_LUNCH_TEMPLATE_SUCCESS, data));
   } catch (error) {
     console.log(error);
     res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
