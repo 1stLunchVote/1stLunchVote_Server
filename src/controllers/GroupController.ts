@@ -39,8 +39,29 @@ const postGroup = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @route Get /
+ *  @desc get all groups
+ *  @access Public
+ */
+const getAllGroup = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+  try {
+    const data = await GroupService.getAllGroup(userId);
+    if (data === message.NO_GROUPS) {
+      return res.status(statusCode.NO_CONTENT).send(util.fail(statusCode.NO_CONTENT, message.NO_GROUPS));
+    }
+
+    res.status(statusCode.CREATED).send(util.success(statusCode.OK, message.GET_ALL_GROUPS_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
 const GroupContoller = {
   postGroup,
+  getAllGroup,
 };
 
 export default GroupContoller;
