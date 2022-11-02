@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import statusCode from '../modules/statusCode';
 import util from '../modules/util';
 import message from '../modules/responseMessage';
@@ -11,7 +11,7 @@ import { UpdateLunchTemplateRequestDto } from '../interfaces/lunchTemplate/reque
  *  @desc post lunch template
  *  @access Public
  */
-const postLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
+const postLunchTemplate = async (req: Request, res: Response) => {
   const userId = req.body.userId;
   try {
     const postLunchTemplateRequestDto: LunchTemplateDto = {
@@ -41,7 +41,7 @@ const postLunchTemplate = async (req: Request, res: Response, next: NextFunction
  *  @desc get all lunch template
  *  @access Public
  */
-const getAllLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
+const getAllLunchTemplate = async (req: Request, res: Response) => {
   const userId = req.body.userId;
   try {
     const data = await LunchTemplateService.getAllLunchTemplate(userId);
@@ -62,7 +62,7 @@ const getAllLunchTemplate = async (req: Request, res: Response, next: NextFuncti
  *  @desc get lunch template detail
  *  @access Public
  */
-const getLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
+const getLunchTemplate = async (req: Request, res: Response) => {
   try {
     const lunchTemplateId = req.params.lunchTemplateId;
     if (!lunchTemplateId) {
@@ -82,11 +82,11 @@ const getLunchTemplate = async (req: Request, res: Response, next: NextFunction)
 };
 
 /**
- *  @route Patch /:lunchTemplateId
+ *  @route Put /:lunchTemplateId
  *  @desc update lunch template
  *  @access Public
  */
-const updateLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
+const updateLunchTemplate = async (req: Request, res: Response) => {
   const userId = req.body.userId;
   try {
     const lunchTemplateId = req.params.lunchTemplateId;
@@ -119,11 +119,37 @@ const updateLunchTemplate = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+/**
+ *  @route Delete /:lunchTemplateId
+ *  @desc delete lunch template
+ *  @access Public
+ */
+const deleteLunchTemplate = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+  try {
+    const lunchTemplateId = req.params.lunchTemplateId;
+    if (!lunchTemplateId) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_PARAMETER));
+    }
+
+    const data = await LunchTemplateService.deleteLunchTemplate(lunchTemplateId);
+    if (data === message.INVALID_PARAMETER) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_PARAMETER));
+    }
+
+    res.status(statusCode.CREATED).send(util.success(statusCode.OK, message.DELETE_LUNCH_TEMPLATE_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
 const LunchTemplateContoller = {
   postLunchTemplate,
   getAllLunchTemplate,
   getLunchTemplate,
-  updateLunchTemplate
+  updateLunchTemplate,
+  deleteLunchTemplate,
 };
 
 export default LunchTemplateContoller;

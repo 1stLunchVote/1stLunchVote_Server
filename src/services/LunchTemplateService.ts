@@ -145,7 +145,7 @@ const updateLunchTemplate = async (userId: string, updatelunchTemplateRequestDto
   }
 };
 
-const deleteLunchTemplate = async (lunchTemplateId: string): Promise<LunchTemplateDto | string> => {
+const deleteLunchTemplate = async (lunchTemplateId: string): Promise<string | undefined> => {
   try {
     const lunchTemplate = await LunchTemplate.findById(lunchTemplateId);
     if (!lunchTemplate) {
@@ -153,8 +153,6 @@ const deleteLunchTemplate = async (lunchTemplateId: string): Promise<LunchTempla
     }
 
     await lunchTemplate.deleteOne();
-
-    return responseMessage.DELETE_LUNCH_TEMPLATE_SUCCESS;
   } catch (error) {
     console.log(error);
     throw error;
