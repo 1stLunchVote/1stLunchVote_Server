@@ -31,7 +31,7 @@ const postLunchTemplate = async (userId: string, lunchTemplateDto: LunchTemplate
 const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateResponseDto | string> => {
   try {
     const lunchTemplateList = await LunchTemplate.find({
-      userId: userId
+      userId: userId,
     });
 
     const results = await Promise.all(
@@ -51,14 +51,14 @@ const getAllLunchTemplate = async (userId: string): Promise<GetAllLunchTemplateR
 
     const data: GetAllLunchTemplateResponseDto = {
       lunchTemplates: results,
-    }
+    };
 
     return data;
   } catch (error) {
     console.log(error);
     throw error;
   }
-}
+};
 
 const getLunchTemplate = async (lunchTemplateId: string): Promise<GetLunchTemplateResponseDto | string> => {
   try {
@@ -92,13 +92,36 @@ const getLunchTemplate = async (lunchTemplateId: string): Promise<GetLunchTempla
       templateName: lunchTemplate.templateName,
       menu: results,
     };
-    
+
     return data;
   } catch (error) {
     console.log(error);
     throw error;
   }
-}
+};
+
+const updateLunchTemplate = async (userId: string, lunchTemplateDto: LunchTemplateDto): Promise<LunchTemplateDto | string> => {
+  try {
+    const templateName = lunchTemplateDto.templateName;
+
+    if (!isTemplateNameValid(templateName)) {
+      return responseMessage.INVALID_TEMPLATE_NAME_LENGTH;
+    }
+
+    const lunchTemplate = new LunchTemplate({
+      userId: userId,
+      templateName: lunchTemplateDto.templateName,
+      likesMenu: lunchTemplateDto.likesMenu,
+      dislikesMenu: lunchTemplateDto.dislikesMenu,
+    });
+    await LunchTemplate.findByIdAndUpdate(lunchTemplateDto._id);
+
+    return lunchTemplateDto;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
 const isTemplateNameValid = (templateName: string) => {
   if (templateName.length < 2 || templateName.length > 10) {
@@ -110,7 +133,7 @@ const isTemplateNameValid = (templateName: string) => {
 const LunchTemplateService = {
   postLunchTemplate,
   getAllLunchTemplate,
-  getLunchTemplate
+  getLunchTemplate,
 };
 
 export default LunchTemplateService;
