@@ -6,21 +6,28 @@ import responseMessage from '../modules/responseMessage';
 
 const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDto): Promise<PostGroupResponseDto | string | string[]> => {
   try {
-    const invalidEmails: string[] = [];
-    const members = await Promise.all(
-      postGroupRequestDto.membersEmail.map(async (email) => {
-        const user = await User.findOne({
-          email: email,
-        });
-        if (user) {
-          return user;
-        } else {
-          invalidEmails.push(email);
-        }
-      }),
-    );
-    if (invalidEmails) {
-      return invalidEmails;
+    const captain = await User.findById('635f8f410ef44d4c5213e8e5');
+    let members;
+    if (!captain) {
+      return responseMessage.NO_USER;
+    }
+    if (postGroupRequestDto.membersEmail) {
+      const invalidEmails: string[] = [];
+      members = await Promise.all(
+        postGroupRequestDto.membersEmail.map(async (email) => {
+          const user = await User.findOne({
+            email: email,
+          });
+          if (user) {
+            return user;
+          } else {
+            invalidEmails.push(email);
+          }
+        }),
+      );
+      if (invalidEmails.length > 0) {
+        return invalidEmails;
+      }
     }
 
     const groupName = postGroupRequestDto.groupName;
@@ -34,11 +41,8 @@ const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDt
       members: members,
       templates: [],
     });
+    group.save();
 
-    const captain = await User.findById(userId);
-    if (!captain) {
-      return responseMessage.NO_USER;
-    }
     const data: PostGroupResponseDto = {
       captain: captain.nickname,
       groupName: group.groupName,
