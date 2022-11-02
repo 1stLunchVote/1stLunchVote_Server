@@ -65,7 +65,7 @@ const getAllGroup = async (userId: string): Promise<GetAllGroupResponseDto | str
     const groupsWithMember = await Group.find().where('members').in([userId]);
 
     const groups = groupsWithCaptain.concat(groupsWithMember);
-    if (!groups) {
+    if (groups.length === 0) {
       return responseMessage.NO_GROUPS;
     }
 

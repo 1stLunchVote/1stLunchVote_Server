@@ -49,7 +49,7 @@ const getAllGroup = async (req: Request, res: Response) => {
   try {
     const data = await GroupService.getAllGroup(userId);
     if (data === message.NO_GROUPS) {
-      return res.status(statusCode.NO_CONTENT).send(util.fail(statusCode.NO_CONTENT, message.NO_GROUPS));
+      return res.status(statusCode.OK).send(util.success(statusCode.NO_CONTENT, message.NO_GROUPS));
     }
 
     res.status(statusCode.CREATED).send(util.success(statusCode.OK, message.GET_ALL_GROUPS_SUCCESS, data));
