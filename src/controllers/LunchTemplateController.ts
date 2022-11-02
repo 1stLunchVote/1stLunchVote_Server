@@ -62,7 +62,6 @@ const getAllLunchTemplate = async (req: Request, res: Response, next: NextFuncti
  *  @access Public
  */
 const getLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.body.userId;
   try {
     const lunchTemplateId = req.params.lunchTemplateId;
     if (!lunchTemplateId) {

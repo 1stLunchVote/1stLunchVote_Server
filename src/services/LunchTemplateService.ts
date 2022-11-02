@@ -4,6 +4,7 @@ import LunchTemplate from '../models/LunchTemplate';
 import { GetAllLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetAllLunchTemplateResponseDto';
 import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
 import Menu from '../models/Menu';
+import { UpdateLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/UpdateLunchTemplateRequestDto';
 
 const postLunchTemplate = async (userId: string, lunchTemplateDto: LunchTemplateDto): Promise<LunchTemplateDto | string> => {
   try {
@@ -100,23 +101,29 @@ const getLunchTemplate = async (lunchTemplateId: string): Promise<GetLunchTempla
   }
 };
 
-const updateLunchTemplate = async (userId: string, lunchTemplateDto: LunchTemplateDto): Promise<LunchTemplateDto | string> => {
+const updateLunchTemplate = async (userId: string, updatelunchTemplateRequestDto: UpdateLunchTemplateRequestDto): Promise<LunchTemplateDto | string> => {
   try {
-    const templateName = lunchTemplateDto.templateName;
+    const templateName = updatelunchTemplateRequestDto.templateName;
 
     if (!isTemplateNameValid(templateName)) {
       return responseMessage.INVALID_TEMPLATE_NAME_LENGTH;
     }
 
-    const lunchTemplate = new LunchTemplate({
+    const updateLunchTemplateDao = new LunchTemplate({
       userId: userId,
-      templateName: lunchTemplateDto.templateName,
-      likesMenu: lunchTemplateDto.likesMenu,
-      dislikesMenu: lunchTemplateDto.dislikesMenu,
+      templateName: updatelunchTemplateRequestDto.templateName,
+      likesMenu: updatelunchTemplateRequestDto.likesMenu,
+      dislikesMenu: updatelunchTemplateRequestDto.dislikesMenu,
     });
-    await LunchTemplate.findByIdAndUpdate(lunchTemplateDto._id);
+    await LunchTemplate.findByIdAndUpdate(updatelunchTemplateRequestDto.lunchTemplateId, updateLunchTemplateDao);
 
-    return lunchTemplateDto;
+    const data = {
+      templateName: updatelunchTemplateRequestDto.templateName,
+      likesMenu: updatelunchTemplateRequestDto.likesMenu,
+      dislikesMenu: updatelunchTemplateRequestDto.dislikesMenu,
+    };
+
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
@@ -134,6 +141,7 @@ const LunchTemplateService = {
   postLunchTemplate,
   getAllLunchTemplate,
   getLunchTemplate,
+  updateLunchTemplate
 };
 
 export default LunchTemplateService;
