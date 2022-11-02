@@ -3,7 +3,7 @@ import statusCode from '../modules/statusCode';
 import util from '../modules/util';
 import message from '../modules/responseMessage';
 import LunchTemplateService from '../services/LunchTemplateService';
-import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/postLunchTemplateRequestDto';
+import { LunchTemplateDto } from '../interfaces/lunchTemplate/LunchTemplateDto';
 
 /**
  *  @route Post /
@@ -13,7 +13,7 @@ import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request
 const postLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
   const userId = req.body.userId;
   try {
-    const postLunchTemplateRequestDto: PostLunchTemplateRequestDto = {
+    const postLunchTemplateRequestDto: LunchTemplateDto = {
       templateName: req.body.templateName,
       likesMenu: req.body.likesMenu,
       dislikesMenu: req.body.dislikesMenu,

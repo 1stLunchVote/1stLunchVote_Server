@@ -1,29 +1,27 @@
-import { PostLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/PostLunchTemplateResponseDto';
-import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/postLunchTemplateRequestDto';
+import { LunchTemplateDto } from '../interfaces/lunchTemplate/LunchTemplateDto';
 import responseMessage from '../modules/responseMessage';
 import LunchTemplate from '../models/LunchTemplate';
 import { GetAllLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetAllLunchTemplateResponseDto';
 import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
 import Menu from '../models/Menu';
 
-const postLunchTemplate = async (userId: string, postLunchTemplateRequestDto: PostLunchTemplateRequestDto): Promise<PostLunchTemplateResponseDto | string> => {
+const postLunchTemplate = async (userId: string, lunchTemplateDto: LunchTemplateDto): Promise<LunchTemplateDto | string> => {
   try {
-    const templateName = postLunchTemplateRequestDto.templateName;
+    const templateName = lunchTemplateDto.templateName;
 
     if (!isTemplateNameValid(templateName)) {
       return responseMessage.INVALID_TEMPLATE_NAME_LENGTH;
     }
 
-    const data: PostLunchTemplateResponseDto = postLunchTemplateRequestDto;
     const lunchTemplate = new LunchTemplate({
       userId: userId,
-      templateName: data.templateName,
-      likesMenu: data.likesMenu,
-      dislikesMenu: data.dislikesMenu,
+      templateName: lunchTemplateDto.templateName,
+      likesMenu: lunchTemplateDto.likesMenu,
+      dislikesMenu: lunchTemplateDto.dislikesMenu,
     });
     await lunchTemplate.save();
 
-    return data;
+    return lunchTemplateDto;
   } catch (error) {
     console.log(error);
     throw error;
