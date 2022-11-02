@@ -108,6 +108,9 @@ const updateLunchTemplate = async (userId: string, updatelunchTemplateRequestDto
     if (!isTemplateNameValid(templateName)) {
       return responseMessage.INVALID_TEMPLATE_NAME_LENGTH;
     }
+    if (!await LunchTemplate.findById(updatelunchTemplateRequestDto.lunchTemplateId)) {
+      return responseMessage.INVALID_PARAMETER;
+    }
 
     const updateLunchTemplateDao = new LunchTemplate({
       userId: userId,
