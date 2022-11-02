@@ -3,7 +3,8 @@ import statusCode from '../modules/statusCode';
 import util from '../modules/util';
 import message from '../modules/responseMessage';
 import LunchTemplateService from '../services/LunchTemplateService';
-import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/postLunchTemplateRequestDto';
+import { LunchTemplateDto } from '../interfaces/lunchTemplate/LunchTemplateDto';
+import { UpdateLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/UpdateLunchTemplateRequestDto';
 
 /**
  *  @route Post /
@@ -13,7 +14,7 @@ import { PostLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request
 const postLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
   const userId = req.body.userId;
   try {
-    const postLunchTemplateRequestDto: PostLunchTemplateRequestDto = {
+    const postLunchTemplateRequestDto: LunchTemplateDto = {
       templateName: req.body.templateName,
       likesMenu: req.body.likesMenu,
       dislikesMenu: req.body.dislikesMenu,
@@ -62,7 +63,6 @@ const getAllLunchTemplate = async (req: Request, res: Response, next: NextFuncti
  *  @access Public
  */
 const getLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
-  const userId = req.body.userId;
   try {
     const lunchTemplateId = req.params.lunchTemplateId;
     if (!lunchTemplateId) {
@@ -79,12 +79,51 @@ const getLunchTemplate = async (req: Request, res: Response, next: NextFunction)
     console.log(error);
     res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
   }
-}
+};
+
+/**
+ *  @route Patch /:lunchTemplateId
+ *  @desc update lunch template
+ *  @access Public
+ */
+const updateLunchTemplate = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.body.userId;
+  try {
+    const lunchTemplateId = req.params.lunchTemplateId;
+    if (!lunchTemplateId) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_PARAMETER));
+    }
+
+    const updateLunchTemplateRequestDto: UpdateLunchTemplateRequestDto = {
+      lunchTemplateId: lunchTemplateId,
+      templateName: req.body.templateName,
+      likesMenu: req.body.likesMenu,
+      dislikesMenu: req.body.dislikesMenu,
+    };
+
+    if (!updateLunchTemplateRequestDto) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NULL_VALUE));
+    }
+
+    const data = await LunchTemplateService.updateLunchTemplate(userId, updateLunchTemplateRequestDto);
+    if (data === message.INVALID_TEMPLATE_NAME_LENGTH) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_TEMPLATE_NAME_LENGTH));
+    } else if (data === message.INVALID_PARAMETER) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_PARAMETER));
+    }
+
+    res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.UPDATE_LUNCH_TEMPLATE_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
 
 const LunchTemplateContoller = {
   postLunchTemplate,
   getAllLunchTemplate,
   getLunchTemplate,
+  updateLunchTemplate
 };
 
 export default LunchTemplateContoller;

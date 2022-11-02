@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-export interface PostLunchTemplateRequestDto {
+export interface LunchTemplateDto {
   templateName: string;
   likesMenu: mongoose.Types.ObjectId[];
   dislikesMenu: mongoose.Types.ObjectId[];
