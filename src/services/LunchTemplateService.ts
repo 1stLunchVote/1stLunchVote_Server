@@ -145,6 +145,22 @@ const updateLunchTemplate = async (userId: string, updatelunchTemplateRequestDto
   }
 };
 
+const deleteLunchTemplate = async (lunchTemplateId: string): Promise<LunchTemplateDto | string> => {
+  try {
+    const lunchTemplate = await LunchTemplate.findById(lunchTemplateId);
+    if (!lunchTemplate) {
+      return responseMessage.INVALID_PARAMETER;
+    }
+
+    await lunchTemplate.deleteOne();
+
+    return responseMessage.DELETE_LUNCH_TEMPLATE_SUCCESS;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 const isTemplateNameValid = (templateName: string) => {
   if (templateName.length < 2 || templateName.length > 10) {
     return false;
@@ -156,7 +172,8 @@ const LunchTemplateService = {
   postLunchTemplate,
   getAllLunchTemplate,
   getLunchTemplate,
-  updateLunchTemplate
+  updateLunchTemplate,
+  deleteLunchTemplate,
 };
 
 export default LunchTemplateService;
