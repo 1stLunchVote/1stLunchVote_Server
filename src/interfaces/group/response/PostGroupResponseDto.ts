@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export interface PostGroupResponseDto {
-  userId: string;
+  captain: string;
   groupName: string;
-  membersEmail: mongoose.Types.ObjectId[];
+  members: mongoose.Types.ObjectId[];
 }
