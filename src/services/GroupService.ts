@@ -4,7 +4,7 @@ import Group from "../models/Group";
 import User from "../models/User";
 import responseMessage from '../modules/responseMessage';
 
-const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDto): Promise<PostGroupResponseDto | string> => {
+const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDto): Promise<PostGroupResponseDto | string | string[]> => {
   try {
     const invalidEmails: string[] = [];
     const members = await Promise.all(
@@ -20,12 +20,17 @@ const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDt
       }),
     );
     if (invalidEmails) {
-      return invalidEmails.join(', ');
+      return invalidEmails;
+    }
+
+    const groupName = postGroupRequestDto.groupName;
+    if (groupName.length < 2 || groupName.length > 10) {
+      return responseMessage.INVALID_GROUP_NAME_LENGTH;
     }
 
     const group = new Group({
       captain: userId,
-      groupName: postGroupRequestDto.groupName,
+      groupName: groupName,
       members: members,
       templates: [],
     });
