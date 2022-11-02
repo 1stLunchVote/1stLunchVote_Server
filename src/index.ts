@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import config from './config';
 const app = express();
 import connectDB from './loaders/db';
@@ -21,7 +21,7 @@ interface ErrorType {
 }
 
 // 모든 에러
-app.use(function (err: ErrorType, req: Request, res: Response, next: NextFunction) {
+app.use(function (err: ErrorType, req: Request, res: Response) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'production' ? err : {};
 

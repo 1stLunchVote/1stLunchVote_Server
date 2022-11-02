@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import statusCode from '../modules/statusCode';
 import AuthService from '../services/AuthService';
 import util from '../modules/util';
@@ -10,7 +10,7 @@ import { LoginRequestDto } from '../interfaces/auth/request/LoginRequestDto';
  *  @desc social login
  *  @access Public
  */
-const socialLogin = async (req: Request, res: Response, next: NextFunction) => {
+const socialLogin = async (req: Request, res: Response) => {
   try {
     const { social } = req.params;
     if (social != 'KAKAO') {

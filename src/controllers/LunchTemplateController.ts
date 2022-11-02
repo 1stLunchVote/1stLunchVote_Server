@@ -125,7 +125,6 @@ const updateLunchTemplate = async (req: Request, res: Response) => {
  *  @access Public
  */
 const deleteLunchTemplate = async (req: Request, res: Response) => {
-  const userId = req.body.userId;
   try {
     const lunchTemplateId = req.params.lunchTemplateId;
     if (!lunchTemplateId) {
