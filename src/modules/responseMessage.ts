@@ -35,6 +35,11 @@ const message = {
   GET_LUNCH_TEMPLATE_SUCCESS: '템플릿 상세 조회 성공',
   UPDATE_LUNCH_TEMPLATE_SUCCESS: '템플릿 수정 성공',
   DELETE_LUNCH_TEMPLATE_SUCCESS: '템플릿 삭제 성공',
+
+  // group
+  INVALID_EMAIL: '는 없는 이메일입니다.',
+  INVALID_GROUP_NAME_LENGTH: '그룹 이름의 길이를 2~10으로 해주세요.',
+  POST_GROUP_SUCCESS: '그룹 생성 성공',
 };
 
 export default message;

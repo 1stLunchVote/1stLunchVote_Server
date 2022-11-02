@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import statusCode from '../modules/statusCode';
 import UserService from '../services/UserService';
 import util from '../modules/util';
@@ -10,7 +10,7 @@ import { NicknameUpdateRequestDto } from '../interfaces/user/request/NicknameUpd
  *  @desc update nickname
  *  @access Public
  */
-const updateUserNickname = async (req: Request, res: Response, next: NextFunction) => {
+const updateUserNickname = async (req: Request, res: Response) => {
   const userId = req.body.userId;
   try {
     const nicknameUpdateRequestDto: NicknameUpdateRequestDto = req.body;

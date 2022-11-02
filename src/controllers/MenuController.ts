@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import statusCode from '../modules/statusCode';
 import util from '../modules/util';
 import message from '../modules/responseMessage';
@@ -9,7 +9,7 @@ import MenuService from '../services/MenuService';
  *  @desc get menu list
  *  @access Public
  */
-const getAllMenu = async (req: Request, res: Response, next: NextFunction) => {
+const getAllMenu = async (req: Request, res: Response) => {
   try {
     const data = await MenuService.getAllMenu();
 
