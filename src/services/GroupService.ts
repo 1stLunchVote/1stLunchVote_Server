@@ -156,6 +156,9 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
       return responseMessage.ALREADY_IN_GROUP;
     }
 
+    group.members.push(user._id);
+    group.save();
+
     const data: UserInfo = {
       userId: user._id,
       email: user.email,
