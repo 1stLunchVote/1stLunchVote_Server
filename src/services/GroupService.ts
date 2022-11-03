@@ -1,13 +1,15 @@
 import { PostGroupRequestDto } from '../interfaces/group/request/PostGroupRequestDto';
 import { GetAllGroupResponseDto } from '../interfaces/group/response/GetAllGroupResponseDto';
+import { GetGroupResponseDto } from '../interfaces/group/response/GetGroupResponseDto';
 import { PostGroupResponseDto } from '../interfaces/group/response/PostGroupResponseDto';
+import { UserInfo } from '../interfaces/user/UserInfo';
 import Group from '../models/Group';
 import User from '../models/User';
 import responseMessage from '../modules/responseMessage';
 
 const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDto): Promise<PostGroupResponseDto | string | string[]> => {
   try {
-    const captain = await User.findById('635f8f410ef44d4c5213e8e5');
+    const captain = await User.findById(userId);
     let members;
     if (!captain) {
       return responseMessage.NO_USER;
@@ -83,7 +85,53 @@ const getAllGroup = async (userId: string): Promise<GetAllGroupResponseDto | str
 
     const data: GetAllGroupResponseDto = {
       groups: results,
-    } 
+    };
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getGroup = async (groupId: string): Promise<GetGroupResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    const captainInfo = await User.findById(group.captain);
+    console.log(captainInfo)
+    const captain: UserInfo = {
+      userId: group.captain,
+      email: captainInfo!.email,
+      nickname: captainInfo!.nickname,
+    }
+    let members: UserInfo[];
+    if (group.members.length > 0) {
+      members = await Promise.all(
+        group.members.map(async (member) => {
+          const memberInfo = await User.findById(member);
+          const result: UserInfo = {
+            userId: member,
+            email: memberInfo!.email,
+            nickname: memberInfo!.nickname,
+          };
+
+          return result;
+        }),
+      );
+    } else {
+      members = [];
+    }
+
+    const data: GetGroupResponseDto = {
+      groupName: group.groupName,
+      isDrawing: group.isDrawing,
+      captain: captain,
+      members: members,
+    };
 
     return data;
   } catch (error) {
@@ -95,6 +143,7 @@ const getAllGroup = async (userId: string): Promise<GetAllGroupResponseDto | str
 const GroupService = {
   postGroup,
   getAllGroup,
+  getGroup,
 };
 
 export default GroupService;
