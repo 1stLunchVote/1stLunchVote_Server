@@ -43,6 +43,7 @@ const message = {
   NO_GROUPS: '가입된 그룹이 없습니다.',
   GET_ALL_GROUPS_SUCCESS: '전체 그룹 조회 성공',
   NO_GROUP: '없는 그룹입니다.',
+  GET_GROUP_SUCCESS: '그룹 상세 조회 성공',
 };
 
 export default message;
