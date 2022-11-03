@@ -9,7 +9,7 @@ import responseMessage from '../modules/responseMessage';
 
 const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDto): Promise<PostGroupResponseDto | string | string[]> => {
   try {
-    const captain = await User.findById('635f8f410ef44d4c5213e8e5');
+    const captain = await User.findById(userId);
     let members;
     if (!captain) {
       return responseMessage.NO_USER;
@@ -102,24 +102,29 @@ const getGroup = async (groupId: string): Promise<GetGroupResponseDto | string> 
     }
 
     const captainInfo = await User.findById(group.captain);
+    console.log(captainInfo)
     const captain: UserInfo = {
       userId: group.captain,
       email: captainInfo!.email,
       nickname: captainInfo!.nickname,
     }
+    let members: UserInfo[];
+    if (group.members.length > 0) {
+      members = await Promise.all(
+        group.members.map(async (member) => {
+          const memberInfo = await User.findById(member);
+          const result: UserInfo = {
+            userId: member,
+            email: memberInfo!.email,
+            nickname: memberInfo!.nickname,
+          };
 
-    const members = await Promise.all(
-      group.members.map(async (member) => {
-        const memberInfo = await User.findById(member);
-        const result: UserInfo = {
-          userId: member,
-          email: memberInfo!.email,
-          nickname: memberInfo!.nickname,
-        };
-
-        return result;
-      }),
-    );
+          return result;
+        }),
+      );
+    } else {
+      members = [];
+    }
 
     const data: GetGroupResponseDto = {
       groupName: group.groupName,
