@@ -189,7 +189,7 @@ const exileMember = async (groupId: string, email: string): Promise<UserInfo | s
       return responseMessage.NOT_IN_GROUP;
     }
 
-    group.members.reduce(user._id);
+    group.members = group.members.filter((userId) => userId != user.id);
     group.save();
 
     const data: UserInfo = {
