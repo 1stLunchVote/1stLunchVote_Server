@@ -44,6 +44,8 @@ const message = {
   GET_ALL_GROUPS_SUCCESS: '전체 그룹 조회 성공',
   NO_GROUP: '없는 그룹입니다.',
   GET_GROUP_SUCCESS: '그룹 상세 조회 성공',
+  ALREADY_IN_GROUP: '이미 그룹에 있는 맴버입니다.',
+  INVITE_MEMBER_SUCCESS: '그룹에 맴버 초대 성공',
 };
 
 export default message;
