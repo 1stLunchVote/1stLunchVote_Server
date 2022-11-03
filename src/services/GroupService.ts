@@ -102,7 +102,6 @@ const getGroup = async (groupId: string): Promise<GetGroupResponseDto | string> 
     }
 
     const captainInfo = await User.findById(group.captain);
-    console.log(captainInfo)
     const captain: UserInfo = {
       userId: group.captain,
       email: captainInfo!.email,
@@ -140,10 +139,41 @@ const getGroup = async (groupId: string): Promise<GetGroupResponseDto | string> 
   }
 };
 
+const inviteMember = async (groupId: string, email: string): Promise<UserInfo | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    const user = await User.findOne({
+      email: email
+    });
+    if (!user) {
+      return responseMessage.NO_USER;
+    }
+    if (group.members.includes(user._id)) {
+      return responseMessage.ALREADY_IN_GROUP;
+    }
+
+    const data: UserInfo = {
+      userId: user._id,
+      email: user.email,
+      nickname: user.nickname,
+    };
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 const GroupService = {
   postGroup,
   getAllGroup,
   getGroup,
+  inviteMember,
 };
 
 export default GroupService;
