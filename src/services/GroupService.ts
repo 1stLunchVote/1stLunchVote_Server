@@ -225,13 +225,28 @@ const updateGroupName = async (groupId: string, groupName: string): Promise<stri
   }
 };
 
+const deleteGroup = async (groupId: string): Promise<string> => {
+  try {
+    const group = await Group.findByIdAndDelete(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    return responseMessage.DELETE_GROUP_SUCCESS;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 const GroupService = {
   postGroup,
   getAllGroup,
   getGroup,
   inviteMember,
   exileMember,
-  updateGroupName
+  updateGroupName,
+  deleteGroup,
 };
 
 export default GroupService;
