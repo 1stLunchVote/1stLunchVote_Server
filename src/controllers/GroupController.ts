@@ -14,7 +14,6 @@ const postGroup = async (req: Request, res: Response) => {
   const userId = req.body.userId;
   try {
     const postGroupRequestDto: PostGroupRequestDto = {
-      groupName: req.body.groupName,
       membersEmail: req.body.membersEmail,
     };
 
@@ -23,9 +22,7 @@ const postGroup = async (req: Request, res: Response) => {
     }
 
     const data = await GroupService.postGroup(userId, postGroupRequestDto);
-    if (data === message.INVALID_GROUP_NAME_LENGTH) {
-      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.INVALID_GROUP_NAME_LENGTH));
-    } else if (data === message.NO_USER) {
+    if (data === message.NO_USER) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
     } else if (Array.isArray(data)) {
       const emails = data.join(', ');

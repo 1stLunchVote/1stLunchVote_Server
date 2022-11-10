@@ -22,10 +22,6 @@ const GroupSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
-    groupName: {
-        type: String,
-        required: true,
-    }
   },
   {
     timestamps: true,

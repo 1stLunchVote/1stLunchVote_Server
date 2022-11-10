@@ -10,46 +10,49 @@ import responseMessage from '../modules/responseMessage';
 const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDto): Promise<PostGroupResponseDto | string | string[]> => {
   try {
     const captain = await User.findById(userId);
-    let members;
     if (!captain) {
       return responseMessage.NO_USER;
     }
+    const captainInfo: UserInfo = {
+      userId: captain._id,
+      email: captain.email,
+      nickname: captain.nickname,
+    };
+    const members: UserInfo[] = [];
+    members.push(captainInfo);
     if (postGroupRequestDto.membersEmail) {
       const invalidEmails: string[] = [];
-      members = await Promise.all(
-        postGroupRequestDto.membersEmail.map(async (email) => {
+      postGroupRequestDto.membersEmail.forEach(async (email) => {
           const user = await User.findOne({
             email: email,
           });
           if (user) {
-            return user;
+            const userInfo: UserInfo = {
+              userId: user._id,
+              email: user.email,
+              nickname: user.nickname,
+            };
+            members.push(userInfo);
           } else {
             invalidEmails.push(email);
           }
-        }),
-      );
+        });
+
       if (invalidEmails.length > 0) {
         return invalidEmails;
       }
     }
 
-    const groupName = postGroupRequestDto.groupName;
-    if (groupName.length < 2 || groupName.length > 10) {
-      return responseMessage.INVALID_GROUP_NAME_LENGTH;
-    }
-
     const group = new Group({
       captain: userId,
-      groupName: groupName,
       members: members,
       templates: [],
     });
     group.save();
 
     const data: PostGroupResponseDto = {
-      captain: captain.nickname,
-      groupName: group.groupName,
-      members: group.members,
+      groupId: group._id,
+      members: members,
     };
 
     return data;
@@ -106,7 +109,7 @@ const getGroup = async (groupId: string): Promise<GetGroupResponseDto | string> 
       userId: group.captain,
       email: captainInfo!.email,
       nickname: captainInfo!.nickname,
-    }
+    };
     let members: UserInfo[];
     if (group.members.length > 0) {
       members = await Promise.all(
@@ -147,7 +150,7 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
     }
 
     const user = await User.findOne({
-      email: email
+      email: email,
     });
     if (!user) {
       return responseMessage.NO_USER;
