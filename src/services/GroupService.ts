@@ -205,33 +205,12 @@ const exileMember = async (groupId: string, email: string): Promise<UserInfo | s
   }
 };
 
-const updateGroupName = async (groupId: string, groupName: string): Promise<string> => {
-  try {
-    const group = await Group.findById(groupId);
-    if (!group) {
-      return responseMessage.NO_GROUP;
-    }
-
-    if (groupName.length < 2 || groupName.length > 10) {
-      return responseMessage.INVALID_GROUP_NAME_LENGTH;
-    }
-    group.groupName = groupName;
-    group.save();
-
-    return responseMessage.UPDATE_GROUP_NAME_SUCCESS;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
 const GroupService = {
   postGroup,
   getAllGroup,
   getGroup,
   inviteMember,
   exileMember,
-  updateGroupName,
 };
 
 export default GroupService;
