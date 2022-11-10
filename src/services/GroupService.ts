@@ -1,6 +1,4 @@
 import { PostGroupRequestDto } from '../interfaces/group/request/PostGroupRequestDto';
-import { GetAllGroupResponseDto } from '../interfaces/group/response/GetAllGroupResponseDto';
-import { GetGroupResponseDto } from '../interfaces/group/response/GetGroupResponseDto';
 import { PostGroupResponseDto } from '../interfaces/group/response/PostGroupResponseDto';
 import { UserInfo } from '../interfaces/user/UserInfo';
 import Group from '../models/Group';
@@ -62,44 +60,8 @@ const postGroup = async (userId: string, postGroupRequestDto: PostGroupRequestDt
   }
 };
 
-const getAllGroup = async (userId: string): Promise<GetAllGroupResponseDto | string> => {
-  try {
-    const groupsWithCaptain = await Group.find({
-      captain: userId,
-    });
-    const groupsWithMember = await Group.find().where('members').in([userId]);
-
-    const groups = groupsWithCaptain.concat(groupsWithMember);
-    if (groups.length === 0) {
-      return responseMessage.NO_GROUPS;
-    }
-
-    const results = await Promise.all(
-      groups.map(async (group) => {
-        const result = {
-          groupId: group._id,
-          groupName: group.groupName,
-          memberCount: group.members.length + 1,
-        };
-
-        return result;
-      }),
-    );
-
-    const data: GetAllGroupResponseDto = {
-      groups: results,
-    };
-
-    return data;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
 const GroupService = {
   postGroup,
-  getAllGroup,
 };
 
 export default GroupService;
