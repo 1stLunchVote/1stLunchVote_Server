@@ -8,6 +8,5 @@ router.post('/', auth, GroupContoller.postGroup);
 router.get('/', auth, GroupContoller.getAllGroup);
 router.get('/:groupId', auth, GroupContoller.getGroup);
 router.patch('/:groupId/invite', auth, GroupContoller.inviteMember);
-router.patch('/:groupId/exile', auth, GroupContoller.exileMember);
 
 export default router;
