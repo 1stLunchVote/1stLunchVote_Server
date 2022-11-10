@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
+import { UserInfo } from '../../user/UserInfo';
 
 export interface PostGroupResponseDto {
-  captain: string;
-  groupName: string;
-  members: mongoose.Types.ObjectId[];
+  groupId: mongoose.Types.ObjectId;
+  members: UserInfo[];
 }
