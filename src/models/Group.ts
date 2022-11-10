@@ -3,11 +3,6 @@ import { GroupInfo } from '../interfaces/group/GroupInfo';
 
 const GroupSchema = new mongoose.Schema(
   {
-    captain: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
     members: [
       {
         type: mongoose.Types.ObjectId,
