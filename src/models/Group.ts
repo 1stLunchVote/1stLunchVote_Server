@@ -16,12 +16,7 @@ const GroupSchema = new mongoose.Schema(
         required: true,
         ref: 'LunchTemplate',
       },
-    ],
-    isDrawing: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
+    ]
   },
   {
     timestamps: true,
