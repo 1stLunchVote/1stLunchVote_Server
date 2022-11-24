@@ -35,40 +35,30 @@ const postGroup = async (userId: string): Promise<PostGroupResponseDto | string>
   }
 };
 
-const inviteMember = async (groupId: string, email: string): Promise<PostGroupResponseDto | string> => {
+const inviteMember = async (groupId: string, email: string): Promise<UserInfo | string> => {
   try {
     const member = await User.findOne({ email: email });
     if (!member) {
       return responseMessage.NO_USER;
     }
 
-    const group = await Group.findById(groupId).populate('members');
+    const group = await Group.findById(groupId);
     if (!group) {
       return responseMessage.NO_GROUP;
     }
-    console.log(group);
+    if (group.members.find(member._id)) {
+      return responseMessage.ALREADY_IN_GROUP;
+    }
 
     group.members.push(member._id);
-    group.update();
-    console.log(group);
+    await group.save();
 
-    // const members = Promise.all(
-    //   group.members.map(async (member) => {
-    //     const result: UserInfo = {
-    //       email: member.email,
-    //       nickname: member.nickname
-    //     };
+    const data: UserInfo = {
+      email: member.email,
+      nickname: member.nickname,
+    };
 
-    //     return result;
-    //   })
-    // )
-
-    // const data: PostGroupResponseDto = {
-    //   groupId: group._id,
-    //   members: members,
-    // };
-
-    return '';
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
