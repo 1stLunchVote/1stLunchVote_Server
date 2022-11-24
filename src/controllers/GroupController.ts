@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import statusCode from '../modules/statusCode';
 import util from '../modules/util';
 import message from '../modules/responseMessage';
-import { PostGroupRequestDto } from '../interfaces/group/request/PostGroupRequestDto';
 import GroupService from '../services/GroupService';
 
 /**
@@ -13,20 +12,9 @@ import GroupService from '../services/GroupService';
 const postGroup = async (req: Request, res: Response) => {
   const userId = req.body.userId;
   try {
-    const postGroupRequestDto: PostGroupRequestDto = {
-      membersEmail: req.body.membersEmail,
-    };
-
-    if (!postGroupRequestDto) {
-      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NULL_VALUE));
-    }
-
-    const data = await GroupService.postGroup(userId, postGroupRequestDto);
+    const data = await GroupService.postGroup(userId);
     if (data === message.NO_USER) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
-    } else if (Array.isArray(data)) {
-      const emails = data.join(', ');
-      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, emails + message.INVALID_EMAIL));
     }
 
     res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.POST_GROUP_SUCCESS, data));
@@ -36,8 +24,34 @@ const postGroup = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @route Patch /:groupId/invite
+ *  @desc patch group members
+ *  @access Public
+ */
+const inviteMember = async (req: Request, res: Response) => {
+  try {
+    const groupId = req.params.groupId;
+    const email = req.body.email;
+    const data = await GroupService.inviteMember(groupId, email);
+    if (data === message.NO_USER) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
+    } else if (data === message.ALREADY_IN_GROUP) {
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, message.ALREADY_IN_GROUP));
+    } else if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    }
+
+    res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.INVITE_MEMBER_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
 const GroupContoller = {
   postGroup,
+  inviteMember,
 };
 
 export default GroupContoller;
