@@ -36,6 +36,10 @@ const inviteMember = async (req: Request, res: Response) => {
     const data = await GroupService.inviteMember(groupId, email);
     if (data === message.NO_USER) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
+    } else if (data === message.ALREADY_IN_GROUP) {
+      return res.status(statusCode.OK).send(util.success(statusCode.OK, message.ALREADY_IN_GROUP));
+    } else if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
     }
 
     res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.INVITE_MEMBER_SUCCESS, data));

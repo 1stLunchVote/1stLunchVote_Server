@@ -46,7 +46,7 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
     if (!group) {
       return responseMessage.NO_GROUP;
     }
-    if (group.members.find(member._id)) {
+    if (group.members.includes(member._id)) {
       return responseMessage.ALREADY_IN_GROUP;
     }
 
