@@ -49,9 +49,33 @@ const inviteMember = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @route Patch /:groupId/join
+ *  @desc get group
+ *  @access Public
+ */
+const joinGroup = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+  try {
+    const groupId = req.params.groupId;
+    const data = await GroupService.joinGroup(userId, groupId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    } else if (data === message.NOT_IN_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NOT_IN_GROUP));
+    } else if (data === message.NO_USER) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+}
+
 const GroupContoller = {
   postGroup,
   inviteMember,
+  joinGroup,
 };
 
 export default GroupContoller;

@@ -8,7 +8,7 @@ import responseMessage from '../modules/responseMessage';
 const kakaoLogin = async (loginRequestDto: LoginRequestDto): Promise<LoginResponseDto | string | null> => {
   try {
     // 필요한 값이 들어있는지 체크
-    if (!loginRequestDto.socialToken) {
+    if (!loginRequestDto.socialToken || !loginRequestDto.fcmToken) {
       return responseMessage.NULL_VALUE;
     }
 
@@ -35,10 +35,14 @@ const kakaoLogin = async (loginRequestDto: LoginRequestDto): Promise<LoginRespon
         socialType: 'KAKAO',
         email: kakaoUserData.kakao_account.email,
         nickname: kakaoUserData.kakao_account.profile.nickname,
+        profileImage: kakaoUserData.kakao_account.profile.profile_image_url,
+        fcmToken: loginRequestDto.fcmToken,
       });
 
       await user.save();
       existUser = user;
+    } else {
+      existUser.fcmToken = loginRequestDto.fcmToken;
     }
 
     await User.findByIdAndUpdate(existUser._id, existUser);
@@ -46,8 +50,8 @@ const kakaoLogin = async (loginRequestDto: LoginRequestDto): Promise<LoginRespon
     const loginResponseDto: LoginResponseDto = {
       email: existUser.email,
       nickname: existUser.nickname,
-      accessToken: getToken(existUser._id)
-    }
+      accessToken: getToken(existUser._id),
+    };
 
     return loginResponseDto;
   } catch (error) {
