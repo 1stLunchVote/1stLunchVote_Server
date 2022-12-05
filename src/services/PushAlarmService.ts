@@ -18,7 +18,7 @@ admin.initializeApp({
   credential: admin.credential.cert(firebaseKeys),
 });
 
-const pushAlarm = async (fcmToken: string, nickname: string) => {
+const pushAlarm = async (fcmToken: string, nickname: string, groupId: string) => {
   try {
     const message = {
       notification: {
@@ -26,7 +26,7 @@ const pushAlarm = async (fcmToken: string, nickname: string) => {
         body: nickname + '님께서 그룹에 초대하셨습니다.'
       },
       data: {
-        link: 'naver.com'
+        groupId: groupId
       },
       token: fcmToken,
     };

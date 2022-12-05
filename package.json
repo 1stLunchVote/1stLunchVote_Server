@@ -25,7 +25,6 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.2",
     "mongoose-type-email": "^1.1.2",
-    "socket.io": "^4.5.4",
     "ts-config": "^20.10.0"
   },
   "devDependencies": {

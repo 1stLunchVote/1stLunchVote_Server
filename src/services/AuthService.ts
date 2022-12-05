@@ -43,6 +43,7 @@ const kakaoLogin = async (loginRequestDto: LoginRequestDto): Promise<LoginRespon
       existUser = user;
     } else {
       existUser.fcmToken = loginRequestDto.fcmToken;
+      existUser.save();
     }
 
     await User.findByIdAndUpdate(existUser._id, existUser);

@@ -65,7 +65,7 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
       fcmToken: member.fcmToken,
     };
 
-    await PushAlarmService.pushAlarm(member.fcmToken, member.nickname);
+    await PushAlarmService.pushAlarm(member.fcmToken, member.nickname, groupId);
 
     return data;
   } catch (error) {
