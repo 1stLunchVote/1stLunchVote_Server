@@ -49,6 +49,8 @@ const message = {
   INVITE_MEMBER_SUCCESS: '그룹에 맴버 초대 성공',
   NOT_IN_GROUP: '그룹에 없는 맴버입니다.',
   JOIN_GROUP_SUCCESS: '그룹 참여 성공',
+  FIRST_VOTE_SUCCESS: '첫 투표 성공',
+  ALREADY_VOTED: '이미 투표하셨습니다.',
 
 };
 

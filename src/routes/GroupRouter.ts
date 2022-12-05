@@ -8,5 +8,6 @@ router.post('/', auth, GroupContoller.postGroup);
 router.get('/:groupId', auth, GroupContoller.getGroup);
 router.patch('/:groupId/invite', auth, GroupContoller.inviteMember);
 router.patch('/:groupId/join', auth, GroupContoller.joinGroup);
+router.patch('/:groupId/vote/first', auth, GroupContoller.firstVote);
 
 export default router;

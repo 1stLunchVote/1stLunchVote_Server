@@ -7,6 +7,7 @@ import LunchTemplate from '../models/LunchTemplate';
 import User from '../models/User';
 import responseMessage from '../modules/responseMessage';
 import { MemberInfoResponseDto } from '../interfaces/user/response/MemberInfoResponseDto';
+import { VoteResponseDto } from '../interfaces/group/response/VoteResponseDto';
 
 const postGroup = async (userId: string): Promise<GroupResponseDto | string> => {
   try {
@@ -148,37 +149,39 @@ const getGroup = async (userId: string, groupId: string): Promise<GroupResponseD
   }
 }
 
-// const firstVote = async (groupId: string, templateId: string): Promise<GetLunchTemplateResponseDto | string> => {
-//   try {
-//     const group = await Group.findById(groupId);
-//     if (!group) {
-//       return responseMessage.NO_GROUP;
-//     }
-//     const template = await LunchTemplate.findById(templateId);
-//     if (!template) {
-//       return responseMessage.NO_TEMPLATE;
-//     }
+const firstVote = async (groupId: string, templateId: string): Promise<VoteResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+    const template = await LunchTemplate.findById(templateId);
+    if (!template) {
+      return responseMessage.NO_TEMPLATE;
+    } else if (group.templates.includes(template._id)) {
+      return responseMessage.ALREADY_VOTED;
+    }
 
-//     group.templates.push(template._id);
-//     await group.save();
+    group.templates.push(template._id);
+    await group.save();
 
-//     const data: UserInfo = {
-//       email: member.email,
-//       nickname: member.nickname,
-//     };
+    const data: VoteResponseDto = {
+      count: group.templates.length
+    };
 
-//     return data;
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// };
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
 const GroupService = {
   postGroup,
   inviteMember,
   joinGroup,
   getGroup,
+  firstVote,
 };
 
 export default GroupService;

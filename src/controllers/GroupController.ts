@@ -93,11 +93,36 @@ const getGroup = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @route Patch /:groupId/vote/first
+ *  @desc vote first
+ *  @access Public
+ */
+const firstVote = async (req: Request, res: Response) => {
+  try {
+    const groupId = req.params.groupId;
+    const templateId = req.body.templateId;
+    const data = await GroupService.firstVote(groupId, templateId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    } else if (data === message.NO_TEMPLATE) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_TEMPLATE));
+    } else if (data === message.ALREADY_VOTED) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.ALREADY_VOTED));
+    } 
+    res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.FIRST_VOTE_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+}
+
 const GroupContoller = {
   postGroup,
   inviteMember,
   joinGroup,
-  getGroup
+  getGroup,
+  firstVote
 };
 
 export default GroupContoller;
