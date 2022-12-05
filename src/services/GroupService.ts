@@ -304,6 +304,49 @@ const getSecondVoteStatus = async (groupId: string): Promise<VoteStatusResponseD
   }
 };
 
+const getSecondVoteResult = async (groupId: string): Promise<MenuInfo | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    const menuMap = new Map();
+    for (const i in group.menus) {
+      const hasValue = menuMap.get(group.menus[i]);
+      if (hasValue) {
+        menuMap.set(group.menus[i].toString(), hasValue + 1);
+      } {
+        menuMap.set(group.menus[i].toString(), 1);
+      }
+    }
+    let modeMenu = null;
+    let mode = 1;
+    for (const [key, value] of menuMap) {
+      if (value >= mode) {
+        mode = value;
+        modeMenu = key;
+      }
+    }
+
+    const menu = await Menu.findById(modeMenu);
+    if (!menu) {
+      return responseMessage.NO_MENU;
+    }
+
+    const data: MenuInfo = {
+      menuId: menu._id,
+      menuName: menu.menuName,
+      image: menu.image
+    };
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 const GroupService = {
   postGroup,
   inviteMember,
@@ -314,6 +357,7 @@ const GroupService = {
   getFirstVoteResult,
   secondVote,
   getSecondVoteStatus,
+  getSecondVoteResult,
 };
 
 export default GroupService;
