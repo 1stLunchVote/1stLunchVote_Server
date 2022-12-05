@@ -1,4 +1,4 @@
-import { PostGroupResponseDto } from '../interfaces/group/response/PostGroupResponseDto';
+import { GroupResponseDto } from '../interfaces/group/response/GroupResponseDto';
 import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
 import { UserInfo } from '../interfaces/user/UserInfo';
 import PushAlarmService from './PushAlarmService';
@@ -6,8 +6,9 @@ import Group from '../models/Group';
 import LunchTemplate from '../models/LunchTemplate';
 import User from '../models/User';
 import responseMessage from '../modules/responseMessage';
+import { MemberInfoResponseDto } from '../interfaces/user/response/MemberInfoResponseDto';
 
-const postGroup = async (userId: string): Promise<PostGroupResponseDto | string> => {
+const postGroup = async (userId: string): Promise<GroupResponseDto | string> => {
   try {
     const captain = await User.findById(userId);
     if (!captain) {
@@ -20,15 +21,14 @@ const postGroup = async (userId: string): Promise<PostGroupResponseDto | string>
     });
     group.save();
 
-    const captainInfo: UserInfo = {
+    const captainInfo: MemberInfoResponseDto = {
       email: captain.email,
       nickname: captain.nickname,
-      profileImage: captain.profileImage,
-      fcmToken: captain.fcmToken,
+      profileImage: captain.profileImage
     };
-    const members: UserInfo[] = [captainInfo];
+    const members: MemberInfoResponseDto[] = [captainInfo];
 
-    const data: PostGroupResponseDto = {
+    const data: GroupResponseDto = {
       groupId: group._id,
       members: members,
     };
@@ -40,7 +40,7 @@ const postGroup = async (userId: string): Promise<PostGroupResponseDto | string>
   }
 };
 
-const inviteMember = async (groupId: string, email: string): Promise<UserInfo | string> => {
+const inviteMember = async (groupId: string, email: string): Promise<MemberInfoResponseDto | string> => {
   try {
     const member = await User.findOne({ email: email });
     if (!member) {
@@ -55,14 +55,10 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
       return responseMessage.ALREADY_IN_GROUP;
     }
 
-    group.members.push(member._id);
-    await group.save();
-
-    const data: UserInfo = {
+    const data: MemberInfoResponseDto = {
       email: member.email,
       nickname: member.nickname,
       profileImage: member.profileImage,
-      fcmToken: member.fcmToken,
     };
 
     await PushAlarmService.pushAlarm(member.fcmToken, member.nickname, groupId);
@@ -74,7 +70,7 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
   }
 };
 
-const joinGroup = async (userId: string, groupId: string): Promise<null | string> => {
+const joinGroup = async (userId: string, groupId: string): Promise<GroupResponseDto | string> => {
   try {
     const group = await Group.findById(groupId);
     if (!group) {
@@ -84,16 +80,49 @@ const joinGroup = async (userId: string, groupId: string): Promise<null | string
     if (!user) {
       return responseMessage.NO_USER;
     }
-    if (!group.members.includes(user._id)) {
-      return responseMessage.NOT_IN_GROUP;
+    if (group.members.includes(user._id)) {
+      return responseMessage.ALREADY_IN_GROUP;
     }
 
-    return null;
+    group.members.push(user._id);
+    console.log(group.members);
+    await group.save();
+
+    const members = await Promise.all(
+      group.members.map(async (memberId) => {
+        const user = await User.findById(memberId);
+        if (!user) {
+          throw Error;
+        }
+        const result: MemberInfoResponseDto = {
+          email: user.email,
+          nickname: user.nickname,
+          profileImage: user.profileImage
+        }
+        return result;
+      })
+    );
+
+    const data: GroupResponseDto = {
+      groupId: group._id,
+      members: members
+    } 
+
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
+
+// const refreshGroup = async (userId: string, groupId: string): Promise<null | string> => {
+//   try {
+
+//   } catch (error) {
+//     console.log(error);
+//     throw error;
+//   }
+// }
 
 // const firstVote = async (groupId: string, templateId: string): Promise<GetLunchTemplateResponseDto | string> => {
 //   try {

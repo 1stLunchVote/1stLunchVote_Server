@@ -48,9 +48,9 @@ const message = {
   ALREADY_IN_GROUP: '이미 그룹에 있는 맴버입니다.',
   INVITE_MEMBER_SUCCESS: '그룹에 맴버 초대 성공',
   NOT_IN_GROUP: '그룹에 없는 맴버입니다.',
-  EXILE_MEMBER_SUCCESS: '맴버 추방 성공',
-  UPDATE_GROUP_NAME_SUCCESS: '그룹 이름 변경 성공',
-  DELETE_GROUP_SUCCESS: '그룹 삭제 성공',
+  JOIN_GROUP_SUCCESS: '그룹 참여 성공',
+
+
 };
 
 export default message;
