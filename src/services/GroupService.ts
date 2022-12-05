@@ -115,14 +115,38 @@ const joinGroup = async (userId: string, groupId: string): Promise<GroupResponse
   }
 };
 
-// const refreshGroup = async (userId: string, groupId: string): Promise<null | string> => {
-//   try {
+const getGroup = async (userId: string, groupId: string): Promise<GroupResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId).populate({
+      path: "members",
+      model: "User"
+    });
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+    const members = await Promise.all(
+      group.members.map(async (member) => {
+        const user: any = member;
+        const result: MemberInfoResponseDto = {
+          email: user.email,
+          nickname: user.nickname,
+          profileImage: user.profileImage,
+        };
+        return result;
+      }),
+    );
 
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// }
+    const data: GroupResponseDto = {
+      groupId: group._id,
+      members: members
+    }
+    return data;
+
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 // const firstVote = async (groupId: string, templateId: string): Promise<GetLunchTemplateResponseDto | string> => {
 //   try {
@@ -154,6 +178,7 @@ const GroupService = {
   postGroup,
   inviteMember,
   joinGroup,
+  getGroup,
 };
 
 export default GroupService;

@@ -38,6 +38,9 @@ const kakaoLogin = async (loginRequestDto: LoginRequestDto): Promise<LoginRespon
         profileImage: kakaoUserData.kakao_account.profile.profile_image_url,
         fcmToken: loginRequestDto.fcmToken,
       });
+      if (!user.profileImage) {
+        user.profileImage = 'https://cdn-icons-png.flaticon.com/512/847/847969.png';
+      }
 
       await user.save();
       existUser = user;

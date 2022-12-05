@@ -22,6 +22,7 @@ const message = {
   // user
   NICKNAME_UPDATE_SUCCESS: '닉네임 변경 성공',
   INVALID_NICKNAME_LENGTH: '닉네임 길이를 2~8 으로 해주세요.',
+  GET_USER_SUCCESS: '유저 조회 성공',
 
   // menu
   GET_ALL_MENU_SUCCESS: '메뉴 전체 조회 성공',
@@ -42,14 +43,12 @@ const message = {
   INVALID_GROUP_NAME_LENGTH: '그룹 이름의 길이를 2~10으로 해주세요.',
   POST_GROUP_SUCCESS: '그룹 생성 성공',
   NO_GROUPS: '가입된 그룹이 없습니다.',
-  GET_ALL_GROUPS_SUCCESS: '전체 그룹 조회 성공',
   NO_GROUP: '없는 그룹입니다.',
-  GET_GROUP_SUCCESS: '그룹 상세 조회 성공',
+  GET_GROUP_SUCCESS: '그룹 조회 성공',
   ALREADY_IN_GROUP: '이미 그룹에 있는 맴버입니다.',
   INVITE_MEMBER_SUCCESS: '그룹에 맴버 초대 성공',
   NOT_IN_GROUP: '그룹에 없는 맴버입니다.',
   JOIN_GROUP_SUCCESS: '그룹 참여 성공',
-
 
 };
 
