@@ -32,8 +32,28 @@ const updateUserNickname = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ *  @route Get /
+ *  @desc get user information
+ *  @access Public
+ */
+const getUserInfo = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+  try {
+    const data = await UserService.getUserInfo(userId);
+    if (data === message.NO_USER) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
+    }
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_USER_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+}
+
 const UserContoller = {
   updateUserNickname,
+  getUserInfo,
 };
 
 export default UserContoller;

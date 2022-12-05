@@ -5,7 +5,12 @@ import auth from '../middleware/auth';
 const router: Router = Router();
 
 router.post('/', auth, GroupContoller.postGroup);
+router.get('/:groupId', auth, GroupContoller.getGroup);
 router.patch('/:groupId/invite', auth, GroupContoller.inviteMember);
-router.patch('/:groupId/join', auth, GroupContoller.inviteMember);
+router.patch('/:groupId/join', auth, GroupContoller.joinGroup);
+router.patch('/:groupId/vote/first', auth, GroupContoller.firstVote);
+router.get('/:groupId/vote/first/status', auth, GroupContoller.getFirstVoteStatus);
+router.get('/:groupId/vote/first/result', auth, GroupContoller.getFirstVoteResult);
+router.patch('/:groupId/vote/second', auth, GroupContoller.secondVote);
 
 export default router;

@@ -1,4 +1,4 @@
-import { PostGroupResponseDto } from '../interfaces/group/response/PostGroupResponseDto';
+import { GroupResponseDto } from '../interfaces/group/response/GroupResponseDto';
 import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
 import { UserInfo } from '../interfaces/user/UserInfo';
 import PushAlarmService from './PushAlarmService';
@@ -6,8 +6,16 @@ import Group from '../models/Group';
 import LunchTemplate from '../models/LunchTemplate';
 import User from '../models/User';
 import responseMessage from '../modules/responseMessage';
+import { MemberInfoResponseDto } from '../interfaces/user/response/MemberInfoResponseDto';
+import { VoteResponseDto } from '../interfaces/group/response/VoteResponseDto';
+import { VoteStatusResponseDto } from '../interfaces/group/response/VoteStatusResponseDto';
+import { MenuInfoList } from '../interfaces/menu/MenuInfoList';
+import { LunchTemplateInfo } from '../interfaces/lunchTemplate/LunchTemplateInfo';
+import mongoose, { MongooseBulkWriteOptions } from 'mongoose';
+import Menu from '../models/Menu';
+import { MenuInfo } from '../interfaces/menu/MenuInfo';
 
-const postGroup = async (userId: string): Promise<PostGroupResponseDto | string> => {
+const postGroup = async (userId: string): Promise<GroupResponseDto | string> => {
   try {
     const captain = await User.findById(userId);
     if (!captain) {
@@ -17,18 +25,18 @@ const postGroup = async (userId: string): Promise<PostGroupResponseDto | string>
     const group = new Group({
       members: [userId],
       templates: [],
+      menus: [],
     });
     group.save();
 
-    const captainInfo: UserInfo = {
+    const captainInfo: MemberInfoResponseDto = {
       email: captain.email,
       nickname: captain.nickname,
-      profileImage: captain.profileImage,
-      fcmToken: captain.fcmToken,
+      profileImage: captain.profileImage
     };
-    const members: UserInfo[] = [captainInfo];
+    const members: MemberInfoResponseDto[] = [captainInfo];
 
-    const data: PostGroupResponseDto = {
+    const data: GroupResponseDto = {
       groupId: group._id,
       members: members,
     };
@@ -40,7 +48,7 @@ const postGroup = async (userId: string): Promise<PostGroupResponseDto | string>
   }
 };
 
-const inviteMember = async (groupId: string, email: string): Promise<UserInfo | string> => {
+const inviteMember = async (groupId: string, email: string): Promise<MemberInfoResponseDto | string> => {
   try {
     const member = await User.findOne({ email: email });
     if (!member) {
@@ -55,14 +63,10 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
       return responseMessage.ALREADY_IN_GROUP;
     }
 
-    group.members.push(member._id);
-    await group.save();
-
-    const data: UserInfo = {
+    const data: MemberInfoResponseDto = {
       email: member.email,
       nickname: member.nickname,
       profileImage: member.profileImage,
-      fcmToken: member.fcmToken,
     };
 
     await PushAlarmService.pushAlarm(member.fcmToken, member.nickname, groupId);
@@ -74,7 +78,7 @@ const inviteMember = async (groupId: string, email: string): Promise<UserInfo | 
   }
 };
 
-const joinGroup = async (userId: string, groupId: string): Promise<null | string> => {
+const joinGroup = async (userId: string, groupId: string): Promise<GroupResponseDto | string> => {
   try {
     const group = await Group.findById(groupId);
     if (!group) {
@@ -84,47 +88,232 @@ const joinGroup = async (userId: string, groupId: string): Promise<null | string
     if (!user) {
       return responseMessage.NO_USER;
     }
-    if (!group.members.includes(user._id)) {
-      return responseMessage.NOT_IN_GROUP;
+    if (group.members.includes(user._id)) {
+      return responseMessage.ALREADY_IN_GROUP;
     }
 
-    return null;
+    group.members.push(user._id);
+    console.log(group.members);
+    await group.save();
+
+    const members = await Promise.all(
+      group.members.map(async (memberId) => {
+        const user = await User.findById(memberId);
+        if (!user) {
+          throw Error;
+        }
+        const result: MemberInfoResponseDto = {
+          email: user.email,
+          nickname: user.nickname,
+          profileImage: user.profileImage
+        }
+        return result;
+      })
+    );
+
+    const data: GroupResponseDto = {
+      groupId: group._id,
+      members: members
+    } 
+
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
 
-// const firstVote = async (groupId: string, templateId: string): Promise<GetLunchTemplateResponseDto | string> => {
-//   try {
-//     const group = await Group.findById(groupId);
-//     if (!group) {
-//       return responseMessage.NO_GROUP;
-//     }
-//     const template = await LunchTemplate.findById(templateId);
-//     if (!template) {
-//       return responseMessage.NO_TEMPLATE;
-//     }
+const getGroup = async (userId: string, groupId: string): Promise<GroupResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId).populate({
+      path: "members",
+      model: "User"
+    });
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+    const members = await Promise.all(
+      group.members.map(async (member) => {
+        const user: any = member;
+        const result: MemberInfoResponseDto = {
+          email: user.email,
+          nickname: user.nickname,
+          profileImage: user.profileImage,
+        };
+        return result;
+      }),
+    );
 
-//     group.templates.push(template._id);
-//     await group.save();
+    const data: GroupResponseDto = {
+      groupId: group._id,
+      members: members
+    }
+    return data;
 
-//     const data: UserInfo = {
-//       email: member.email,
-//       nickname: member.nickname,
-//     };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
-//     return data;
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// };
+const firstVote = async (groupId: string, templateId: string): Promise<VoteResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+    const template = await LunchTemplate.findById(templateId);
+    if (!template) {
+      return responseMessage.NO_TEMPLATE;
+    } else if (group.templates.includes(template._id)) {
+      return responseMessage.ALREADY_VOTED;
+    }
+
+    group.templates.push(template._id);
+    await group.save();
+
+    const data: VoteResponseDto = {
+      count: group.templates.length
+    };
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getFirstVoteStatus = async (groupId: string): Promise<VoteStatusResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    if (group.templates.length !== group.members.length) {
+      const data: VoteStatusResponseDto = {
+        finish: false
+      }
+      return data;
+    } else {
+      const data: VoteStatusResponseDto = {
+        finish: true
+      }
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getFirstVoteResult = async (groupId: string): Promise<MenuInfoList | string> => {
+  try {
+    const group = await Group.findById(groupId).populate({
+      path: 'templates'
+    });
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    const likesMenu: any[] = [];
+    group.templates.forEach((templateId) => {
+      const template: any = templateId;
+      likesMenu.push(...template.likesMenu.map((menu: any) => menu.toString()));
+    });
+    let likesMenuExceptOverlap = [...new Set(likesMenu)];
+    group.templates.forEach((templateId) => {
+      const template: any = templateId;
+      for (const i in template.dislikesMenu) {
+        likesMenuExceptOverlap = likesMenuExceptOverlap
+          .filter((element: string) => element !== template.dislikesMenu[i].toString());
+      }
+    });
+    const menuInfos: MenuInfo[] = await Promise.all(
+      likesMenuExceptOverlap.map(async (menuId: any) => {
+        const menu = await Menu.findById(menuId);
+        if (!menu) {
+          throw Error;
+        }
+        const result: MenuInfo = {
+          menuId: menuId,
+          menuName: menu.menuName,
+          image: menu.image
+        };
+        return result;
+      })
+    );
+
+    const data: MenuInfoList = {
+      menuInfos: menuInfos
+    }
+    
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const secondVote = async (groupId: string, menuId: string): Promise<VoteResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+    const menu = await Menu.findById(menuId);
+    if (!menu) {
+      return responseMessage.NO_MENU;
+    }
+
+    group.menus.push(menu._id);
+    await group.save();
+
+    const data: VoteResponseDto = {
+      count: group.menus.length,
+    };
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getSecondVoteStatus = async (groupId: string): Promise<VoteStatusResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    if (group.menus.length !== group.members.length) {
+      const data: VoteStatusResponseDto = {
+        finish: false,
+      };
+      return data;
+    } else {
+      const data: VoteStatusResponseDto = {
+        finish: true,
+      };
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
 const GroupService = {
   postGroup,
   inviteMember,
   joinGroup,
+  getGroup,
+  firstVote,
+  getFirstVoteStatus,
+  getFirstVoteResult,
+  secondVote,
+  getSecondVoteStatus,
 };
 
 export default GroupService;

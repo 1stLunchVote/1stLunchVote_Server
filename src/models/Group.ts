@@ -16,7 +16,14 @@ const GroupSchema = new mongoose.Schema(
         required: true,
         ref: 'LunchTemplate',
       },
-    ]
+    ],
+    menus: [
+      {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'Menu',
+      },
+    ],
   },
   {
     timestamps: true,
