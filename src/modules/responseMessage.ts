@@ -35,6 +35,7 @@ const message = {
   GET_LUNCH_TEMPLATE_SUCCESS: '템플릿 상세 조회 성공',
   UPDATE_LUNCH_TEMPLATE_SUCCESS: '템플릿 수정 성공',
   DELETE_LUNCH_TEMPLATE_SUCCESS: '템플릿 삭제 성공',
+  NO_TEMPLATE: '없는 템플릿입니다.',
 
   // group
   INVALID_EMAIL: '는 없는 이메일입니다.',

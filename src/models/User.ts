@@ -20,7 +20,11 @@ const UserSchema = new mongoose.Schema(
     profileImage: {
       type: String,
       require: true,
-    }
+    },
+    fcmToken: {
+      type: String,
+      require: true,
+    },
   },
   {
     timestamps: true,

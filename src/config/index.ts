@@ -30,4 +30,6 @@ export default {
    * jwt algorithm
    */
   jwtAlgo: process.env.JWT_ALGO as string,
+
+  socketPort: parseInt(process.env.SOCKET_PORT as string, 10) as number,
 };
