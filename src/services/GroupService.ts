@@ -8,6 +8,12 @@ import User from '../models/User';
 import responseMessage from '../modules/responseMessage';
 import { MemberInfoResponseDto } from '../interfaces/user/response/MemberInfoResponseDto';
 import { VoteResponseDto } from '../interfaces/group/response/VoteResponseDto';
+import { VoteStatusResponseDto } from '../interfaces/group/response/VoteStatusResponseDto';
+import { MenuInfoList } from '../interfaces/menu/MenuInfoList';
+import { LunchTemplateInfo } from '../interfaces/lunchTemplate/LunchTemplateInfo';
+import mongoose, { MongooseBulkWriteOptions } from 'mongoose';
+import Menu from '../models/Menu';
+import { MenuInfo } from '../interfaces/menu/MenuInfo';
 
 const postGroup = async (userId: string): Promise<GroupResponseDto | string> => {
   try {
@@ -19,6 +25,7 @@ const postGroup = async (userId: string): Promise<GroupResponseDto | string> => 
     const group = new Group({
       members: [userId],
       templates: [],
+      menus: [],
     });
     group.save();
 
@@ -176,12 +183,137 @@ const firstVote = async (groupId: string, templateId: string): Promise<VoteRespo
   }
 };
 
+const getFirstVoteStatus = async (groupId: string): Promise<VoteStatusResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    if (group.templates.length !== group.members.length) {
+      const data: VoteStatusResponseDto = {
+        finish: false
+      }
+      return data;
+    } else {
+      const data: VoteStatusResponseDto = {
+        finish: true
+      }
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getFirstVoteResult = async (groupId: string): Promise<MenuInfoList | string> => {
+  try {
+    const group = await Group.findById(groupId).populate({
+      path: 'templates'
+    });
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    const likesMenu: any[] = [];
+    group.templates.forEach((templateId) => {
+      const template: any = templateId;
+      likesMenu.push(...template.likesMenu.map((menu: any) => menu.toString()));
+    });
+    let likesMenuExceptOverlap = [...new Set(likesMenu)];
+    group.templates.forEach((templateId) => {
+      const template: any = templateId;
+      for (const i in template.dislikesMenu) {
+        likesMenuExceptOverlap = likesMenuExceptOverlap
+          .filter((element: string) => element !== template.dislikesMenu[i].toString());
+      }
+    });
+    const menuInfos: MenuInfo[] = await Promise.all(
+      likesMenuExceptOverlap.map(async (menuId: any) => {
+        const menu = await Menu.findById(menuId);
+        if (!menu) {
+          throw Error;
+        }
+        const result: MenuInfo = {
+          menuId: menuId,
+          menuName: menu.menuName,
+          image: menu.image
+        };
+        return result;
+      })
+    );
+
+    const data: MenuInfoList = {
+      menuInfos: menuInfos
+    }
+    
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const secondVote = async (groupId: string, menuId: string): Promise<VoteResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+    const menu = await Menu.findById(menuId);
+    if (!menu) {
+      return responseMessage.NO_MENU;
+    }
+
+    group.menus.push(menu._id);
+    await group.save();
+
+    const data: VoteResponseDto = {
+      count: group.menus.length,
+    };
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getSecondVoteStatus = async (groupId: string): Promise<VoteStatusResponseDto | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+
+    if (group.menus.length !== group.members.length) {
+      const data: VoteStatusResponseDto = {
+        finish: false,
+      };
+      return data;
+    } else {
+      const data: VoteStatusResponseDto = {
+        finish: true,
+      };
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 const GroupService = {
   postGroup,
   inviteMember,
   joinGroup,
   getGroup,
   firstVote,
+  getFirstVoteStatus,
+  getFirstVoteResult,
+  secondVote,
+  getSecondVoteStatus,
 };
 
 export default GroupService;

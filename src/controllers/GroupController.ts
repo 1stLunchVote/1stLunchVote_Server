@@ -117,12 +117,75 @@ const firstVote = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ *  @route Get /:groupId/vote/first/status
+ *  @desc get first vote status
+ *  @access Public
+ */
+const getFirstVoteStatus = async (req: Request, res: Response) => {
+  try {
+    const groupId = req.params.groupId;
+    const data = await GroupService.getFirstVoteStatus(groupId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    }
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_FIRST_VOTE_STATUS_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
+/**
+ *  @route Get /:groupId/vote/first/result
+ *  @desc get first vote result
+ *  @access Public
+ */
+const getFirstVoteResult = async (req: Request, res: Response) => {
+  try {
+    const groupId = req.params.groupId;
+    const data = await GroupService.getFirstVoteResult(groupId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    }
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_FIRST_VOTE_RESULT_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
+/**
+ *  @route Patch /:groupId/vote/second
+ *  @desc vote second
+ *  @access Public
+ */
+const secondVote = async (req: Request, res: Response) => {
+  try {
+    const groupId = req.params.groupId;
+    const menuId = req.body.menuId;
+    const data = await GroupService.secondVote(groupId, menuId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    } else if (data === message.NO_MENU) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_MENU));
+    }
+    res.status(statusCode.CREATED).send(util.success(statusCode.CREATED, message.SECOND_VOTE_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+}
+
 const GroupContoller = {
   postGroup,
   inviteMember,
   joinGroup,
   getGroup,
-  firstVote
+  firstVote,
+  getFirstVoteStatus,
+  getFirstVoteResult,
+  secondVote,
 };
 
 export default GroupContoller;

@@ -51,7 +51,10 @@ const message = {
   JOIN_GROUP_SUCCESS: '그룹 참여 성공',
   FIRST_VOTE_SUCCESS: '첫 투표 성공',
   ALREADY_VOTED: '이미 투표하셨습니다.',
-
+  GET_FIRST_VOTE_STATUS_SUCCESS: '첫 투표 상태 조회 성공',
+  GET_FIRST_VOTE_RESULT_SUCCESS: '첫 투표 결과 조회 성공',
+  NO_MENU: '없는 메뉴입니다.',
+  SECOND_VOTE_SUCCESS: '두번째 투표 성공',
 };
 
 export default message;
