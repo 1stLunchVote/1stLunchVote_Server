@@ -177,6 +177,46 @@ const secondVote = async (req: Request, res: Response) => {
   }
 }
 
+/**
+ *  @route Get /:groupId/vote/second/status
+ *  @desc get second vote status
+ *  @access Public
+ */
+const getSecondVoteStatus = async (req: Request, res: Response) => {
+  try {
+    const groupId = req.params.groupId;
+    const data = await GroupService.getFirstVoteStatus(groupId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    }
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_SECOND_VOTE_STATUS_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
+/**
+ *  @route Get /:groupId/vote/second/result
+ *  @desc get second vote result
+ *  @access Public
+ */
+const getSecondVoteResult = async (req: Request, res: Response) => {
+  try {
+    const groupId = req.params.groupId;
+    const data = await GroupService.getSecondVoteResult(groupId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    } else if (data === message.NO_MENU) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_MENU));
+    }
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.GET_SECOND_VOTE_RESULT_SUCCESS, data));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
 const GroupContoller = {
   postGroup,
   inviteMember,
@@ -186,6 +226,8 @@ const GroupContoller = {
   getFirstVoteStatus,
   getFirstVoteResult,
   secondVote,
+  getSecondVoteStatus,
+  getSecondVoteResult,
 };
 
 export default GroupContoller;

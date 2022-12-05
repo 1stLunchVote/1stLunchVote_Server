@@ -55,6 +55,8 @@ const message = {
   GET_FIRST_VOTE_RESULT_SUCCESS: '첫 투표 결과 조회 성공',
   NO_MENU: '없는 메뉴입니다.',
   SECOND_VOTE_SUCCESS: '두번째 투표 성공',
+  GET_SECOND_VOTE_STATUS_SUCCESS: '두번째 투표 상태 조회 성공',
+  GET_SECOND_VOTE_RESULT_SUCCESS: '두번째 투표 결과 조회 성공',
 };
 
 export default message;
