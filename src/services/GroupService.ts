@@ -48,8 +48,13 @@ const postGroup = async (userId: string): Promise<GroupResponseDto | string> => 
   }
 };
 
-const inviteMember = async (groupId: string, email: string): Promise<MemberInfoResponseDto | string> => {
+const inviteMember = async (groupId: string, userId: string, email: string): Promise<MemberInfoResponseDto | string> => {
   try {
+    const captain = await User.findById(userId);
+    if (!captain) {
+      return responseMessage.NO_USER;
+    }
+
     const member = await User.findOne({ email: email });
     if (!member) {
       return responseMessage.NO_USER;
@@ -69,7 +74,7 @@ const inviteMember = async (groupId: string, email: string): Promise<MemberInfoR
       profileImage: member.profileImage,
     };
 
-    await PushAlarmService.pushAlarm(member.fcmToken, member.nickname, groupId);
+    await PushAlarmService.pushAlarm(member.fcmToken, captain.nickname, groupId);
 
     return data;
   } catch (error) {

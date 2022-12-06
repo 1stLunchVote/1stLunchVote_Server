@@ -30,10 +30,11 @@ const postGroup = async (req: Request, res: Response) => {
  *  @access Public
  */
 const inviteMember = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
   try {
     const groupId = req.params.groupId;
     const email = req.body.email;
-    const data = await GroupService.inviteMember(groupId, email);
+    const data = await GroupService.inviteMember(groupId, userId, email);
     if (data === message.NO_USER) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
     } else if (data === message.ALREADY_IN_GROUP) {
