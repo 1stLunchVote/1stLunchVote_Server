@@ -318,10 +318,10 @@ const getSecondVoteResult = async (groupId: string): Promise<MenuInfo | string> 
 
     const menuMap = new Map();
     for (const i in group.menus) {
-      const hasValue = menuMap.get(group.menus[i]);
+      const hasValue = menuMap.get(group.menus[i].toString());
       if (hasValue) {
         menuMap.set(group.menus[i].toString(), hasValue + 1);
-      } {
+      } else {
         menuMap.set(group.menus[i].toString(), 1);
       }
     }
