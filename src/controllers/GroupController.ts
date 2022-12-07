@@ -186,7 +186,7 @@ const secondVote = async (req: Request, res: Response) => {
 const getSecondVoteStatus = async (req: Request, res: Response) => {
   try {
     const groupId = req.params.groupId;
-    const data = await GroupService.getFirstVoteStatus(groupId);
+    const data = await GroupService.getSecondVoteStatus(groupId);
     if (data === message.NO_GROUP) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
     }
