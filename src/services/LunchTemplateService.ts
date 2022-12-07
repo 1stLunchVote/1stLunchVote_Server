@@ -113,7 +113,7 @@ const updateLunchTemplate = async (userId: string, updatelunchTemplateRequestDto
     if (!lunchTemplate) {
       return responseMessage.INVALID_PARAMETER;
     }
-    
+
     let likesMenu = updatelunchTemplateRequestDto.likesMenu;
     let dislikesMenu = updatelunchTemplateRequestDto.dislikesMenu;
     if (!likesMenu) {

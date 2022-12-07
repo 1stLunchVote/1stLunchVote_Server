@@ -1,6 +1,4 @@
 import { GroupResponseDto } from '../interfaces/group/response/GroupResponseDto';
-import { GetLunchTemplateResponseDto } from '../interfaces/lunchTemplate/response/GetLunchTemplateResponseDto';
-import { UserInfo } from '../interfaces/user/UserInfo';
 import PushAlarmService from './PushAlarmService';
 import Group from '../models/Group';
 import LunchTemplate from '../models/LunchTemplate';
@@ -10,10 +8,9 @@ import { MemberInfoResponseDto } from '../interfaces/user/response/MemberInfoRes
 import { VoteResponseDto } from '../interfaces/group/response/VoteResponseDto';
 import { VoteStatusResponseDto } from '../interfaces/group/response/VoteStatusResponseDto';
 import { MenuInfoList } from '../interfaces/menu/MenuInfoList';
-import { LunchTemplateInfo } from '../interfaces/lunchTemplate/LunchTemplateInfo';
-import mongoose, { MongooseBulkWriteOptions } from 'mongoose';
 import Menu from '../models/Menu';
 import { MenuInfo } from '../interfaces/menu/MenuInfo';
+import { LikesOrDislikesMenuRequestDto } from '../interfaces/lunchTemplate/request/LikesOrDislikesMenuRequestDto';
 
 const postGroup = async (userId: string): Promise<GroupResponseDto | string> => {
   try {
@@ -24,7 +21,9 @@ const postGroup = async (userId: string): Promise<GroupResponseDto | string> => 
 
     const group = new Group({
       members: [userId],
-      templates: [],
+      votedMembers: [],
+      likesMenu: [],
+      dislikesMenu: [],
       menus: [],
     });
     group.save();
@@ -128,7 +127,7 @@ const joinGroup = async (userId: string, groupId: string): Promise<GroupResponse
   }
 };
 
-const getGroup = async (userId: string, groupId: string): Promise<GroupResponseDto | string> => {
+const getGroup = async (groupId: string): Promise<GroupResponseDto | string> => {
   try {
     const group = await Group.findById(groupId).populate({
       path: "members",
@@ -161,24 +160,27 @@ const getGroup = async (userId: string, groupId: string): Promise<GroupResponseD
   }
 }
 
-const firstVote = async (groupId: string, templateId: string): Promise<VoteResponseDto | string> => {
+const firstVote = async (groupId: string, userId: string, likesAndDislikes: LikesOrDislikesMenuRequestDto): Promise<VoteResponseDto | string> => {
   try {
     const group = await Group.findById(groupId);
     if (!group) {
       return responseMessage.NO_GROUP;
     }
-    const template = await LunchTemplate.findById(templateId);
-    if (!template) {
-      return responseMessage.NO_TEMPLATE;
-    } else if (group.templates.includes(template._id)) {
+    const user = await User.findById(userId);
+    if (!user) {
+      return responseMessage.NO_USER;
+    }
+    if (group.votedMembers.includes(user._id)) {
       return responseMessage.ALREADY_VOTED;
     }
 
-    group.templates.push(template._id);
+    group.votedMembers.push(user._id);
+    group.likesMenu.push(...likesAndDislikes.likesMenu);
+    group.likesMenu.push(...likesAndDislikes.dislikesMenu);
     await group.save();
 
     const data: VoteResponseDto = {
-      count: group.templates.length
+      count: group.votedMembers.length
     };
 
     return data;
@@ -195,7 +197,7 @@ const getFirstVoteStatus = async (groupId: string): Promise<VoteStatusResponseDt
       return responseMessage.NO_GROUP;
     }
 
-    if (group.templates.length !== group.members.length) {
+    if (group.votedMembers.length !== group.members.length) {
       const data: VoteStatusResponseDto = {
         finish: false
       }

@@ -10,11 +10,25 @@ const GroupSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
-    templates: [
+    votedMembers: [
       {
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: 'LunchTemplate',
+        ref: 'User',
+      },
+    ],
+    likesMenu: [
+      {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'Menu',
+      },
+    ],
+    dislikesMenu: [
+      {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'Menu',
       },
     ],
     menus: [
