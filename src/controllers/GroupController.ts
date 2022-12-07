@@ -3,6 +3,7 @@ import statusCode from '../modules/statusCode';
 import util from '../modules/util';
 import message from '../modules/responseMessage';
 import GroupService from '../services/GroupService';
+import { LikesOrDislikesMenuRequestDto } from '../interfaces/lunchTemplate/request/LikesOrDislikesMenuRequestDto';
 
 /**
  *  @route Post /
@@ -80,10 +81,9 @@ const joinGroup = async (req: Request, res: Response) => {
  *  @access Public
  */
 const getGroup = async (req: Request, res: Response) => {
-  const userId = req.body.userId;
   try {
     const groupId = req.params.groupId;
-    const data = await GroupService.getGroup(userId, groupId);
+    const data = await GroupService.getGroup(groupId);
     if (data === message.NO_GROUP) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
     }
@@ -100,10 +100,14 @@ const getGroup = async (req: Request, res: Response) => {
  *  @access Public
  */
 const firstVote = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
   try {
     const groupId = req.params.groupId;
-    const templateId = req.body.templateId;
-    const data = await GroupService.firstVote(groupId, templateId);
+    const likesOrDislikesMenuRequestDto: LikesOrDislikesMenuRequestDto = {
+      likesMenu: req.body.likesMenu,
+      dislikesMenu: req.body.dislikesMenu,
+    };
+    const data = await GroupService.firstVote(groupId, userId, likesOrDislikesMenuRequestDto);
     if (data === message.NO_GROUP) {
       return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
     } else if (data === message.NO_TEMPLATE) {

@@ -4,7 +4,7 @@ import util from '../modules/util';
 import message from '../modules/responseMessage';
 import LunchTemplateService from '../services/LunchTemplateService';
 import { LunchTemplateDto } from '../interfaces/lunchTemplate/LunchTemplateDto';
-import { UpdateLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/LikesOrDislikesMenuRequestDto';
+import { UpdateLunchTemplateRequestDto } from '../interfaces/lunchTemplate/request/UpdateLunchTemplateRequestDto';
 
 /**
  *  @route Post /

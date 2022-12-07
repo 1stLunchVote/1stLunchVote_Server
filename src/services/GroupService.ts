@@ -176,7 +176,7 @@ const firstVote = async (groupId: string, userId: string, likesAndDislikes: Like
 
     group.votedMembers.push(user._id);
     group.likesMenu.push(...likesAndDislikes.likesMenu);
-    group.likesMenu.push(...likesAndDislikes.dislikesMenu);
+    group.dislikesMenu.push(...likesAndDislikes.dislikesMenu);
     await group.save();
 
     const data: VoteResponseDto = {
@@ -217,36 +217,30 @@ const getFirstVoteStatus = async (groupId: string): Promise<VoteStatusResponseDt
 const getFirstVoteResult = async (groupId: string): Promise<MenuInfoList | string> => {
   try {
     const group = await Group.findById(groupId).populate({
-      path: 'templates'
+      path: 'likesMenu dislikesMenu'
     });
     if (!group) {
       return responseMessage.NO_GROUP;
     }
 
-    const likesMenu: any[] = [];
-    group.templates.forEach((templateId) => {
-      const template: any = templateId;
-      likesMenu.push(...template.likesMenu.map((menu: any) => menu.toString()));
-    });
-    let likesMenuExceptOverlap = [...new Set(likesMenu)];
-    group.templates.forEach((templateId) => {
-      const template: any = templateId;
-      for (const i in template.dislikesMenu) {
-        likesMenuExceptOverlap = likesMenuExceptOverlap
-          .filter((element: string) => element !== template.dislikesMenu[i].toString());
-      }
-    });
-    const menuInfos: MenuInfo[] = await Promise.all(
-      likesMenuExceptOverlap.map(async (menuId: any) => {
-        const menu = await Menu.findById(menuId);
-        if (!menu) {
-          throw Error;
+    const likesMenuExceptOverlap = new Set(group.likesMenu);
+    const dislikesMenuExceptOverlap = new Set(group.dislikesMenu);
+    for (const i of dislikesMenuExceptOverlap) {
+      for (const j of likesMenuExceptOverlap) {
+        if (i.toString() == j.toString()) {
+          console.log(i);
+          likesMenuExceptOverlap.delete(j);
+          break;
         }
+      }
+    }
+    const menuInfos: MenuInfo[] = await Promise.all(
+      [...likesMenuExceptOverlap].map(async (menu: any) => {
         const result: MenuInfo = {
-          menuId: menuId,
+          menuId: menu._id,
           menuName: menu.menuName,
           image: menu.image
-        };
+        }
         return result;
       })
     );
