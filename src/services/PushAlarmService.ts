@@ -23,7 +23,7 @@ const pushAlarm = async (fcmToken: string, nickname: string, groupId: string) =>
     const message = {
       notification: {
         title: '그룹 초대',
-        body: nickname + '님께서 그룹에 초대하셨습니다.'
+        body: `[${nickname}] 님의 방에 초대되었습니다.`
       },
       data: {
         groupId: groupId
