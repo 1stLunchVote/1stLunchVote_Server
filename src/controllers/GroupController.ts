@@ -95,6 +95,30 @@ const getGroup = async (req: Request, res: Response) => {
 };
 
 /**
+ *  @route Patch /:groupId/withdrawal
+ *  @desc get group
+ *  @access Public
+ */
+const withdrawGroup = async (req: Request, res: Response) => {
+  const userId = req.body.userId;
+  try {
+    const groupId = req.params.groupId;
+    const data = await GroupService.withdrawGroup(groupId, userId);
+    if (data === message.NO_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_GROUP));
+    } else if (data === message.NO_USER) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NO_USER));
+    } else if (data === message.NOT_IN_GROUP) {
+      return res.status(statusCode.BAD_REQUEST).send(util.fail(statusCode.BAD_REQUEST, message.NOT_IN_GROUP));
+    }
+    res.status(statusCode.OK).send(util.success(statusCode.OK, message.WITHDRAW_GROUP_SUCCESS));
+  } catch (error) {
+    console.log(error);
+    res.status(statusCode.INTERNAL_SERVER_ERROR).send(util.fail(statusCode.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+  }
+};
+
+/**
  *  @route Patch /:groupId/vote/first
  *  @desc vote first
  *  @access Public
@@ -227,6 +251,7 @@ const GroupContoller = {
   inviteMember,
   joinGroup,
   getGroup,
+  withdrawGroup,
   firstVote,
   getFirstVoteStatus,
   getFirstVoteResult,

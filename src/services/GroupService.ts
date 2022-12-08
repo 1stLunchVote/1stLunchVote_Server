@@ -160,7 +160,7 @@ const getGroup = async (groupId: string): Promise<GroupResponseDto | string> => 
   }
 }
 
-const withdrawalGroup = async (groupId: string, userId: string): Promise<null | string> => {
+const withdrawGroup = async (groupId: string, userId: string): Promise<null | string> => {
   try {
     const group = await Group.findById(groupId);
     if (!group) {
@@ -376,7 +376,7 @@ const GroupService = {
   inviteMember,
   joinGroup,
   getGroup,
-  withdrawalGroup,
+  withdrawGroup,
   firstVote,
   getFirstVoteStatus,
   getFirstVoteResult,

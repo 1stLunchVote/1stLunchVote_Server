@@ -45,6 +45,7 @@ const message = {
   NO_GROUPS: '가입된 그룹이 없습니다.',
   NO_GROUP: '없는 그룹입니다.',
   GET_GROUP_SUCCESS: '그룹 조회 성공',
+  WITHDRAW_GROUP_SUCCESS: '그룹 탈퇴 성공',
   ALREADY_IN_GROUP: '이미 그룹에 있는 맴버입니다.',
   INVITE_MEMBER_SUCCESS: '그룹에 맴버 초대 성공',
   NOT_IN_GROUP: '그룹에 없는 맴버입니다.',
