@@ -160,6 +160,29 @@ const getGroup = async (groupId: string): Promise<GroupResponseDto | string> => 
   }
 }
 
+const withdrawalGroup = async (groupId: string, userId: string): Promise<null | string> => {
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return responseMessage.NO_GROUP;
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return responseMessage.NO_USER;
+    } else if (!group.members.includes(user._id)) {
+      return responseMessage.NOT_IN_GROUP;
+    }
+
+    group.members = group.members.filter((member) => member.toString() != userId.toString());
+    group.save();
+
+    return null;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 const firstVote = async (groupId: string, userId: string, likesAndDislikes: LikesOrDislikesMenuRequestDto): Promise<VoteResponseDto | string> => {
   try {
     const group = await Group.findById(groupId);
@@ -353,6 +376,7 @@ const GroupService = {
   inviteMember,
   joinGroup,
   getGroup,
+  withdrawalGroup,
   firstVote,
   getFirstVoteStatus,
   getFirstVoteResult,
