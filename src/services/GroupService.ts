@@ -344,14 +344,21 @@ const getSecondVoteResult = async (groupId: string): Promise<MenuInfo | string> 
         menuMap.set(group.menus[i].toString(), 1);
       }
     }
-    let modeMenu = null;
     let mode = 1;
     for (const [key, value] of menuMap) {
       if (value >= mode) {
         mode = value;
-        modeMenu = key;
       }
     }
+
+    const menus = [];
+    for (const [key, value] of menuMap) {
+      if (value === mode) {
+        menus.push(key);
+      }
+    }
+
+    const modeMenu = menus[Math.floor(Math.random() * menus.length)];
 
     const menu = await Menu.findById(modeMenu);
     if (!menu) {
